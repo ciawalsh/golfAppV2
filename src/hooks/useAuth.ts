@@ -1,14 +1,12 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
-  onAuthStateChanged,
   updateProfile,
   signInWithCredential,
   GoogleAuthProvider,
   OAuthProvider,
-  User,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import {
@@ -34,8 +32,15 @@ try {
   }
 }
 
-function buildProfileFromFirebaseUser(firebaseUser: User): UserProfile {
-  return {
+/**
+ * Build a UserProfile from the current Firebase Auth user.
+ * Used by signUpWithEmail after reload() to capture the display name.
+ */
+async function createUserProfileFromCurrent(): Promise<UserProfile | null> {
+  const firebaseUser = auth.currentUser;
+  if (!firebaseUser) return null;
+
+  const fallback: UserProfile = {
     uid: firebaseUser.uid,
     email: firebaseUser.email ?? '',
     displayName: firebaseUser.displayName ?? '',
@@ -46,10 +51,6 @@ function buildProfileFromFirebaseUser(firebaseUser: User): UserProfile {
     handicap: null,
     homeCourse: null,
   };
-}
-
-async function createUserProfile(firebaseUser: User): Promise<UserProfile> {
-  const fallbackProfile = buildProfileFromFirebaseUser(firebaseUser);
 
   try {
     const userRef = doc(db, 'users', firebaseUser.uid);
@@ -57,16 +58,8 @@ async function createUserProfile(firebaseUser: User): Promise<UserProfile> {
 
     if (userSnap.exists()) {
       const data = userSnap.data();
-      // Best-effort update lastLoginAt — don't block auth on failure
-      setDoc(
-        userRef,
-        { lastLoginAt: serverTimestamp() },
-        { merge: true },
-      ).catch((err) => {
-        if (__DEV__) console.warn('Failed to update lastLoginAt:', err);
-      });
       return {
-        ...fallbackProfile,
+        ...fallback,
         createdAt: Number.isFinite(data.createdAt?.toMillis?.())
           ? data.createdAt.toMillis()
           : 0,
@@ -82,67 +75,32 @@ async function createUserProfile(firebaseUser: User): Promise<UserProfile> {
 
     // New user — create Firestore doc (best-effort)
     setDoc(userRef, {
-      ...fallbackProfile,
+      ...fallback,
       createdAt: serverTimestamp(),
       lastLoginAt: serverTimestamp(),
     }).catch((err) => {
       if (__DEV__) console.warn('Failed to create user profile doc:', err);
     });
 
-    return fallbackProfile;
+    return fallback;
   } catch (err) {
-    // Firestore read failed (permissions, network) — still allow auth
     if (__DEV__) {
       console.warn('Firestore profile fetch failed, using fallback:', err);
     }
-    return fallbackProfile;
+    return fallback;
   }
 }
 
+/**
+ * Auth action hooks — sign in, sign up, sign out.
+ * Does NOT register any listeners. Use useAuthListener() in the root layout
+ * for the onAuthStateChanged listener.
+ */
 export function useAuth() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { setUser, clearAuth } = useAuthStore();
   const isMountedRef = useRef(true);
-
-  useEffect(() => {
-    isMountedRef.current = true;
-    let unsubscribe: (() => void) | undefined;
-
-    try {
-      unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-        if (!isMountedRef.current) return;
-
-        if (firebaseUser) {
-          try {
-            const profile = await createUserProfile(firebaseUser);
-            if (isMountedRef.current) {
-              setUser(profile);
-            }
-          } catch (err) {
-            if (__DEV__) {
-              console.error('Error creating user profile:', err);
-            }
-            if (isMountedRef.current) {
-              clearAuth();
-            }
-          }
-        } else {
-          clearAuth();
-        }
-      });
-    } catch (err) {
-      if (__DEV__) {
-        console.error('Firebase auth listener failed to initialize:', err);
-      }
-      clearAuth();
-    }
-
-    return () => {
-      isMountedRef.current = false;
-      unsubscribe?.();
-    };
-  }, [setUser, clearAuth]);
 
   const signInWithEmail = useCallback(
     async (email: string, password: string) => {
@@ -155,9 +113,7 @@ export function useAuth() {
         setError(message);
         throw err;
       } finally {
-        if (isMountedRef.current) {
-          setIsLoading(false);
-        }
+        setIsLoading(false);
       }
     },
     [],
@@ -179,10 +135,11 @@ export function useAuth() {
         // The auth listener has already fired with a blank displayName.
         // Force a refresh: reload the current user and rebuild the profile.
         await auth.currentUser?.reload();
-        const refreshedUser = auth.currentUser;
-        if (refreshedUser && isMountedRef.current) {
-          const profile = await createUserProfile(refreshedUser);
-          setUser(profile);
+        if (isMountedRef.current) {
+          const profile = await createUserProfileFromCurrent();
+          if (profile && isMountedRef.current) {
+            setUser(profile);
+          }
         }
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Sign up failed';

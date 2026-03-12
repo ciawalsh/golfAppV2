@@ -12,6 +12,9 @@
     "format": "prettier --check \"src/**/*.{ts,tsx}\" \"app/**/*.{ts,tsx}\"",
     "format:fix": "prettier --write \"src/**/*.{ts,tsx}\" \"app/**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
+    "emulators": "firebase emulators:start",
+    "emulators:test": "firebase emulators:exec --only firestore,storage 'npx vitest run tests/firebase-rules/'",
+    "test:rules": "vitest run tests/firebase-rules/",
     "prepare": "husky"
   },
   "dependencies": {
@@ -49,6 +52,7 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0",
     "@types/react": "~19.2.2",
     "@typescript-eslint/eslint-plugin": "^8.57.0",
     "@typescript-eslint/parser": "^8.57.0",
@@ -59,7 +63,8 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.3.3",
     "prettier": "^3.8.1",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "vitest": "^3.2.1"
   },
   "private": true
 }

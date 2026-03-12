@@ -9,7 +9,7 @@ import { queryClient } from '@/lib/queryClient';
 import { initSentry } from '@/lib/sentry';
 import { useAuthStore } from '@/stores/authStore';
 import { useAppStore } from '@/stores/appStore';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthListener } from '@/hooks/useAuthListener';
 
 SplashScreen.preventAutoHideAsync();
 initSentry();
@@ -20,8 +20,8 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   const segments = useSegments();
   const router = useRouter();
 
-  // Initialize auth listener
-  useAuth();
+  // Initialize auth listener (single instance for the entire app)
+  useAuthListener();
 
   useEffect(() => {
     if (isLoading) return;

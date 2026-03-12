@@ -46,6 +46,13 @@ Thumbs.db
 functions/node_modules/
 functions/lib/
 
+# Firebase Emulator
+firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log
+ui-debug.log
+pubsub-debug.log
+
 # IDE
 .vscode/
 .idea/
