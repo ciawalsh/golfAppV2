@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserProfile } from '@/types';
 import { useRoundStore } from '@/stores/roundStore';
+import { useAppStore } from '@/stores/appStore';
 
 interface AuthState {
   user: UserProfile | null;
@@ -32,6 +33,8 @@ export const useAuthStore = create<AuthState>()(
       clearAuth: () => {
         // Clear active round to prevent cross-user data leakage
         useRoundStore.getState().abandonRound();
+        // Reset onboarding so next user gets their own onboarding flow
+        useAppStore.getState().setOnboardingComplete(false);
         set({
           user: null,
           isAuthenticated: false,

@@ -95,8 +95,10 @@ export function useLikePost() {
     // Optimistic update
     onMutate: async ({ postId, isLiked }) => {
       await queryClient.cancelQueries({ queryKey: ['communityFeed'] });
+      await queryClient.cancelQueries({ queryKey: ['post', postId] });
 
       const previousData = queryClient.getQueryData(['communityFeed']);
+      const previousPost = queryClient.getQueryData(['post', postId]);
 
       queryClient.setQueryData<
         | {
@@ -124,15 +126,34 @@ export function useLikePost() {
         };
       });
 
-      return { previousData };
+      // Also optimistically update the single-post query (detail screen)
+      queryClient.setQueryData<CommunityPost | null | undefined>(
+        ['post', postId],
+        (old) => {
+          if (!old || !userId) return old;
+          return {
+            ...old,
+            likes: isLiked ? old.likes - 1 : old.likes + 1,
+            likedBy: isLiked
+              ? old.likedBy.filter((id) => id !== userId)
+              : [...old.likedBy, userId],
+          };
+        },
+      );
+
+      return { previousData, previousPost };
     },
-    onError: (_err, _vars, context) => {
+    onError: (_err, { postId }, context) => {
       if (context?.previousData) {
         queryClient.setQueryData(['communityFeed'], context.previousData);
       }
+      if (context?.previousPost) {
+        queryClient.setQueryData(['post', postId], context.previousPost);
+      }
     },
-    onSettled: () => {
+    onSettled: (_data, _err, { postId }) => {
       queryClient.invalidateQueries({ queryKey: ['communityFeed'] });
+      queryClient.invalidateQueries({ queryKey: ['post', postId] });
     },
   });
 }

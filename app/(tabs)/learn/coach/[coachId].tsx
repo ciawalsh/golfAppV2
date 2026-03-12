@@ -23,7 +23,7 @@ export default function CoachDetailScreen() {
   const { coachId } = useLocalSearchParams<{ coachId: string }>();
   const router = useRouter();
   const { isFreeTier } = useSubscription();
-  const { coaches } = useCoaches();
+  const { coaches, isLoading: coachesLoading } = useCoaches();
   const coach = coaches.find((c) => c.id === coachId);
   const { courses, isLoading, error, refetch } = useCoachCourses(
     coachId ?? '',
@@ -56,6 +56,14 @@ export default function CoachDetailScreen() {
       });
     }
   }, [router, coach]);
+
+  if (coachesLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <LoadingSpinner size={32} />
+      </SafeAreaView>
+    );
+  }
 
   if (!coach) {
     return (

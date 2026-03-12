@@ -18,6 +18,7 @@ import MapView, {
 } from 'react-native-maps';
 import { useLocation } from '@/hooks/useLocation';
 import { useRoundStore } from '@/stores/roundStore';
+import { useGolfClubs } from '@/hooks/useGolfClubs';
 import { haversineDistanceYards } from '@/lib/golf';
 import { ClubType, CLUB_LABELS, Shot } from '@/types/golf';
 import { LoadingSpinner } from '@/components/LoadingIndicator';
@@ -65,10 +66,10 @@ export default function ShotTrackerScreen() {
   } = useLocation();
 
   const activeRound = useRoundStore((s) => s.activeRound);
-  const selectedClub = useRoundStore((s) => s.selectedClub);
   const addShot = useRoundStore((s) => s.addShot);
   const removeShot = useRoundStore((s) => s.removeShot);
   const currentHoleIndex = useRoundStore((s) => s.currentHoleIndex);
+  const { clubs } = useGolfClubs();
 
   const holeCount = activeRound?.holeCount ?? 18;
 
@@ -111,19 +112,23 @@ export default function ShotTrackerScreen() {
     return distances;
   }, [shotsForHole]);
 
-  // Map center: course coords > user location > default London
+  // Map center: course club coords > user location > default London
+  // Derive from activeRound.clubId (persisted), not ephemeral selectedClub
   const initialRegion: Region = useMemo(() => {
-    if (
-      selectedClub &&
-      Number.isFinite(selectedClub.latitude) &&
-      Number.isFinite(selectedClub.longitude)
-    ) {
-      return {
-        latitude: selectedClub.latitude,
-        longitude: selectedClub.longitude,
-        latitudeDelta: DEFAULT_DELTA,
-        longitudeDelta: DEFAULT_DELTA,
-      };
+    if (activeRound?.clubId) {
+      const club = clubs.find((c) => c.id === activeRound.clubId);
+      if (
+        club &&
+        Number.isFinite(club.latitude) &&
+        Number.isFinite(club.longitude)
+      ) {
+        return {
+          latitude: club.latitude,
+          longitude: club.longitude,
+          latitudeDelta: DEFAULT_DELTA,
+          longitudeDelta: DEFAULT_DELTA,
+        };
+      }
     }
     if (location) {
       return {
@@ -139,7 +144,7 @@ export default function ShotTrackerScreen() {
       latitudeDelta: DEFAULT_DELTA,
       longitudeDelta: DEFAULT_DELTA,
     };
-  }, [selectedClub, location]);
+  }, [activeRound?.clubId, clubs, location]);
 
   const handleMapPress = useCallback((e: MapPressEvent) => {
     const { latitude, longitude } = e.nativeEvent.coordinate;

@@ -20,6 +20,19 @@ export function useRoundSync() {
     const round = pendingRoundRef.current;
     if (!round) return;
 
+    // Bail if the round was completed or abandoned — prevents stale overwrites
+    const { _syncCancelled } = useRoundStore.getState();
+    if (_syncCancelled) {
+      pendingRoundRef.current = null;
+      return;
+    }
+
+    // Defensive: never write a completed round back via sync
+    if (!round.inProgress) {
+      pendingRoundRef.current = null;
+      return;
+    }
+
     pendingRoundRef.current = null;
 
     try {

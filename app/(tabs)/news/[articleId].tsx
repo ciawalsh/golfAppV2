@@ -5,6 +5,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useArticles } from '@/hooks/useArticles';
 import { FallbackImage } from '@/components/FallbackImage';
+import { LoadingIndicator } from '@/components/LoadingIndicator';
+import { ErrorState } from '@/components/ErrorState';
 import { EmptyState } from '@/components/EmptyState';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
@@ -27,12 +29,28 @@ function formatDate(dateStr: string): string {
 export default function ArticleDetailScreen() {
   const { articleId } = useLocalSearchParams<{ articleId: string }>();
   const router = useRouter();
-  const { articles } = useArticles();
+  const { articles, isLoading, error, refetch } = useArticles();
 
   const article = useMemo(
     () => articles.find((a) => a.id === articleId),
     [articles, articleId],
   );
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <LoadingIndicator />
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ErrorState message="Failed to load article" onRetry={refetch} />
+      </SafeAreaView>
+    );
+  }
 
   if (!article) {
     return (

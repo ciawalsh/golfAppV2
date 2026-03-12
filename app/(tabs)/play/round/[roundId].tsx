@@ -66,10 +66,13 @@ export default function ActiveRoundScreen() {
         text: 'End Round',
         style: 'destructive',
         onPress: async () => {
+          // completeRound() sets _syncCancelled: true, which prevents
+          // useRoundSync's flush() from overwriting with stale inProgress data
           const completed = completeRound();
           if (!completed) return;
 
           try {
+            // Authoritative write — this is the single source of truth
             const roundRef = doc(
               db,
               COLLECTIONS.USERS,

@@ -26,5 +26,6 @@ export function useGolfTees(courseId: string) {
     tees: q.data ?? [],
     isLoading: q.isLoading,
     error: q.error,
+    refetch: q.refetch,
   };
 }

@@ -113,5 +113,6 @@ export function useGolfClubs() {
     clubs: query.data ?? [],
     isLoading: query.isLoading,
     error: query.error,
+    refetch: query.refetch,
   };
 }

@@ -29,11 +29,13 @@ export default function LearnScreen() {
     genres: tipGenres,
     isLoading: tipsLoading,
     error: tipsError,
+    refetch: refetchTips,
   } = useTipVideos();
   const {
     genres: dormyGenres,
     isLoading: dormyLoading,
     error: dormyError,
+    refetch: refetchDormy,
   } = useDormyVideos();
 
   const navigateToCoach = useCallback(
@@ -123,7 +125,7 @@ export default function LearnScreen() {
         {/* Section 2: Caddie Tips (Free) */}
         <SectionHeader title="Caddie Tips" />
         {tipsError ? (
-          <ErrorState message="Failed to load tips" onRetry={() => {}} />
+          <ErrorState message="Failed to load tips" onRetry={refetchTips} />
         ) : tipsLoading ? (
           renderGenreSkeletons()
         ) : (
@@ -142,7 +144,7 @@ export default function LearnScreen() {
         {/* Section 3: The Dormy (Premium) */}
         <SectionHeader title="The Dormy" />
         {dormyError ? (
-          <ErrorState message="Failed to load content" onRetry={() => {}} />
+          <ErrorState message="Failed to load content" onRetry={refetchDormy} />
         ) : dormyLoading ? (
           renderGenreSkeletons()
         ) : (

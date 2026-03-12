@@ -26,7 +26,12 @@ import { spacing, borderRadius } from '@/constants/spacing';
 
 export default function SelectCourseScreen() {
   const router = useRouter();
-  const { clubs, isLoading: clubsLoading, error: clubsError } = useGolfClubs();
+  const {
+    clubs,
+    isLoading: clubsLoading,
+    error: clubsError,
+    refetch: refetchClubs,
+  } = useGolfClubs();
   const { location } = useLocation();
   const setSelectedClub = useRoundStore((s) => s.setSelectedClub);
   const setSelectedCourse = useRoundStore((s) => s.setSelectedCourse);
@@ -212,7 +217,7 @@ export default function SelectCourseScreen() {
           <Text style={styles.loadingText}>Loading clubs...</Text>
         </View>
       ) : clubsError ? (
-        <ErrorState message="Failed to load clubs" onRetry={() => {}} />
+        <ErrorState message="Failed to load clubs" onRetry={refetchClubs} />
       ) : selectedClubId && coursesLoading ? (
         <View style={styles.centered}>
           <LoadingSpinner size={36} />

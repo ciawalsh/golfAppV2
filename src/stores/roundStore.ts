@@ -15,6 +15,9 @@ interface RoundState {
   currentHoleIndex: number;
   isDirty: boolean;
 
+  // Sync cancellation flag (NOT persisted — ephemeral runtime state)
+  _syncCancelled: boolean;
+
   // Actions — setup
   setSelectedClub: (club: GolfClub | null) => void;
   setSelectedCourse: (course: GolfCourse | null) => void;
@@ -60,6 +63,7 @@ export const useRoundStore = create<RoundState>()(
       activeRound: null,
       currentHoleIndex: 0,
       isDirty: false,
+      _syncCancelled: false,
 
       // Setup actions
       setSelectedClub: (club) => set({ selectedClub: club }),
@@ -78,6 +82,7 @@ export const useRoundStore = create<RoundState>()(
           activeRound: round,
           currentHoleIndex: 0,
           isDirty: true,
+          _syncCancelled: false,
         }),
 
       setScore: (holeIndex, score) => {
@@ -154,6 +159,7 @@ export const useRoundStore = create<RoundState>()(
           activeRound: null,
           currentHoleIndex: 0,
           isDirty: false,
+          _syncCancelled: true,
         });
 
         return completed;
@@ -164,6 +170,7 @@ export const useRoundStore = create<RoundState>()(
           activeRound: null,
           currentHoleIndex: 0,
           isDirty: false,
+          _syncCancelled: true,
           selectedClub: null,
           selectedCourse: null,
           selectedTee: null,

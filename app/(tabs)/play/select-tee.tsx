@@ -43,7 +43,9 @@ export default function SelectTeeScreen() {
     clubName: string;
   }>();
 
-  const { tees, isLoading, error } = useGolfTees(params.courseId ?? '');
+  const { tees, isLoading, error, refetch } = useGolfTees(
+    params.courseId ?? '',
+  );
   const user = useAuthStore((s) => s.user);
   const setSelectedTee = useRoundStore((s) => s.setSelectedTee);
   const startRound = useRoundStore((s) => s.startRound);
@@ -158,7 +160,7 @@ export default function SelectTeeScreen() {
           courseName={params.courseName ?? 'Select Tee'}
           onBack={() => router.back()}
         />
-        <ErrorState message="Failed to load tees" onRetry={() => {}} />
+        <ErrorState message="Failed to load tees" onRetry={refetch} />
       </SafeAreaView>
     );
   }

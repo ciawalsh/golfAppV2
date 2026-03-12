@@ -173,7 +173,17 @@ export function useAuth() {
           email,
           password,
         );
+        // Set display name on Firebase Auth profile
         await updateProfile(user, { displayName });
+
+        // The auth listener has already fired with a blank displayName.
+        // Force a refresh: reload the current user and rebuild the profile.
+        await auth.currentUser?.reload();
+        const refreshedUser = auth.currentUser;
+        if (refreshedUser && isMountedRef.current) {
+          const profile = await createUserProfile(refreshedUser);
+          setUser(profile);
+        }
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Sign up failed';
         setError(message);
@@ -184,7 +194,7 @@ export function useAuth() {
         }
       }
     },
-    [],
+    [setUser],
   );
 
   const signInWithGoogle = useCallback(async () => {

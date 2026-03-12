@@ -143,7 +143,7 @@ export default function CourseDetailScreen() {
             lesson={item}
             index={index}
             onPress={() => playLesson(item)}
-            locked={isFreeTier && isPremiumContent(course.minTierLevel)}
+            locked={isFreeTier && isPremiumContent(item.minTierLevel)}
           />
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
