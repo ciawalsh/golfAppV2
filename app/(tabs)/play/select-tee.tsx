@@ -1,19 +1,10 @@
-import { useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  Pressable,
-  Alert,
-  StyleSheet,
-} from 'react-native';
+import { useState, useCallback, useRef } from 'react';
+import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { doc, setDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { COLLECTIONS } from '@/constants/collections';
 import { useGolfTees } from '@/hooks/useGolfTees';
+import { persistRound } from '@/services/roundApi';
 import { useRoundStore } from '@/stores/roundStore';
 import { useAuthStore } from '@/stores/authStore';
 import { GolfTee, HoleScore, Round } from '@/types/golf';
@@ -53,6 +44,7 @@ export default function SelectTeeScreen() {
 
   const [selectedTee, setLocalSelectedTee] = useState<GolfTee | null>(null);
   const [isStarting, setIsStarting] = useState(false);
+  const isStartingRef = useRef(false);
 
   const handleTeePress = useCallback(
     (tee: GolfTee) => {
@@ -63,63 +55,54 @@ export default function SelectTeeScreen() {
   );
 
   const handleStartRound = useCallback(async () => {
-    if (!selectedTee || !user || isStarting) return;
+    if (!selectedTee || !user || isStartingRef.current) return;
 
+    isStartingRef.current = true;
     setIsStarting(true);
 
-    try {
-      const roundId = generateId();
-      const holes: HoleScore[] = selectedTee.holes.map((h) => ({
-        holeNumber: h.holeNumber,
-        par: h.par,
-        yardage: h.yardage,
-        strokeIndex: h.strokeIndex,
-        score: null,
-        putts: null,
-      }));
+    const roundId = generateId();
+    const holes: HoleScore[] = selectedTee.holes.map((h) => ({
+      holeNumber: h.holeNumber,
+      par: h.par,
+      yardage: h.yardage,
+      strokeIndex: h.strokeIndex,
+      score: null,
+      putts: null,
+    }));
 
-      const holeCount: 9 | 18 = selectedTee.holes.length <= 9 ? 9 : 18;
-      const coursePar = selectedTee.holes.reduce((sum, h) => sum + h.par, 0);
+    const holeCount: 9 | 18 = selectedTee.holes.length <= 9 ? 9 : 18;
+    const coursePar = selectedTee.holes.reduce((sum, h) => sum + h.par, 0);
 
-      const round: Round = {
-        id: roundId,
-        userId: user.uid,
-        clubId: params.clubId ?? '',
-        courseId: params.courseId ?? '',
-        courseName: params.courseName ?? '',
-        clubName: params.clubName ?? '',
-        teeColor: selectedTee.teeColor,
-        teeName: selectedTee.teeName,
-        holeCount,
-        coursePar,
-        rating: selectedTee.rating,
-        slope: selectedTee.slope,
-        totalScore: 0,
-        toPar: 0,
-        through: 0,
-        inProgress: true,
-        startedAt: Date.now(),
-        completedAt: 0,
-        holes,
-        shots: [],
-      };
+    const round: Round = {
+      id: roundId,
+      userId: user.uid,
+      clubId: params.clubId ?? '',
+      courseId: params.courseId ?? '',
+      courseName: params.courseName ?? '',
+      clubName: params.clubName ?? '',
+      teeColor: selectedTee.teeColor,
+      teeName: selectedTee.teeName,
+      holeCount,
+      coursePar,
+      rating: selectedTee.rating,
+      slope: selectedTee.slope,
+      totalScore: 0,
+      toPar: 0,
+      through: 0,
+      inProgress: true,
+      startedAt: Date.now(),
+      completedAt: 0,
+      holes,
+      shots: [],
+    };
 
-      // Write to Firestore
-      const roundRef = doc(db, COLLECTIONS.USERS, user.uid, 'rounds', roundId);
-      await setDoc(roundRef, round);
-
-      // Update local store
-      startRound(round);
-      resetSetup();
-
-      // Navigate to active scorecard
-      router.replace(`/play/round/${roundId}`);
-    } catch {
-      Alert.alert('Error', 'Failed to start round. Please try again.');
-    } finally {
-      setIsStarting(false);
-    }
-  }, [selectedTee, user, isStarting, params, startRound, resetSetup, router]);
+    startRound(round);
+    void persistRound(round).catch(() => {
+      // Offline or transient failure — useRoundSync will retry from the round screen.
+    });
+    resetSetup();
+    router.replace(`/play/round/${roundId}`);
+  }, [selectedTee, user, params, startRound, resetSetup, router]);
 
   const renderItem = useCallback(
     ({ item }: { item: GolfTee }) => (

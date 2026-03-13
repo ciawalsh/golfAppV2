@@ -13,8 +13,8 @@
     "format:fix": "prettier --write \"src/**/*.{ts,tsx}\" \"app/**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
     "emulators": "firebase emulators:start",
-    "emulators:test": "firebase emulators:exec --only firestore,storage 'npx vitest run tests/firebase-rules/'",
-    "test:rules": "vitest run tests/firebase-rules/",
+    "emulators:test": "npm run test:rules",
+    "test:rules": "firebase emulators:exec --only firestore,storage 'npx vitest run tests/firebase-rules/'",
     "prepare": "husky"
   },
   "dependencies": {

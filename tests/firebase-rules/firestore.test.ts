@@ -6,9 +6,33 @@ import {
 } from '@firebase/rules-unit-testing';
 import { readFileSync } from 'fs';
 import { describe, beforeAll, afterAll, afterEach, it } from 'vitest';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  serverTimestamp,
+} from 'firebase/firestore';
 
 let testEnv: RulesTestEnvironment;
+
+async function seedUserProfile(
+  uid: string,
+  overrides: Record<string, unknown> = {},
+) {
+  const displayName = uid
+    ? `${uid.slice(0, 1).toUpperCase()}${uid.slice(1)}`
+    : 'User';
+  await testEnv.withSecurityRulesDisabled(async (context) => {
+    const adminDb = context.firestore();
+    await setDoc(doc(adminDb, 'users', uid), {
+      displayName,
+      photoURL: null,
+      handicap: null,
+      ...overrides,
+    });
+  });
+}
 
 beforeAll(async () => {
   testEnv = await initializeTestEnvironment({
@@ -55,6 +79,17 @@ describe('User profile rules', () => {
       setDoc(doc(db, 'users', 'alice'), {
         displayName: 'Alice',
         email: 'alice@example.com',
+      }),
+    );
+  });
+
+  it('denies a user from creating their own profile with subscription data', async () => {
+    const alice = testEnv.authenticatedContext('alice');
+    const db = alice.firestore();
+    await assertFails(
+      setDoc(doc(db, 'users', 'alice'), {
+        displayName: 'Alice',
+        subscription: { tier: 'premium_annual' },
       }),
     );
   });
@@ -125,13 +160,18 @@ describe('Community post rules', () => {
   it('allows a user to create a post with their own userId', async () => {
     const alice = testEnv.authenticatedContext('alice');
     const db = alice.firestore();
+    await seedUserProfile('alice', { displayName: 'Alice' });
     await assertSucceeds(
       setDoc(doc(db, 'communityPosts', 'post1'), {
         userId: 'alice',
+        userName: 'Alice',
+        userAvatar: null,
+        userHandicap: null,
         text: 'Hello world',
         likes: 0,
         likedBy: [],
         commentCount: 0,
+        createdAt: serverTimestamp(),
       }),
     );
   });
@@ -139,13 +179,56 @@ describe('Community post rules', () => {
   it('denies creating a post with another user userId', async () => {
     const alice = testEnv.authenticatedContext('alice');
     const db = alice.firestore();
+    await seedUserProfile('alice', { displayName: 'Alice' });
     await assertFails(
       setDoc(doc(db, 'communityPosts', 'post1'), {
         userId: 'bob',
+        userName: 'Alice',
+        userAvatar: null,
+        userHandicap: null,
         text: 'Impersonation',
         likes: 0,
         likedBy: [],
         commentCount: 0,
+        createdAt: serverTimestamp(),
+      }),
+    );
+  });
+
+  it('denies creating a post with spoofed identity fields', async () => {
+    const alice = testEnv.authenticatedContext('alice');
+    const db = alice.firestore();
+    await seedUserProfile('alice', { displayName: 'Alice', handicap: 18 });
+    await assertFails(
+      setDoc(doc(db, 'communityPosts', 'post1'), {
+        userId: 'alice',
+        userName: 'Mallory',
+        userAvatar: null,
+        userHandicap: 9,
+        text: 'Spoofed identity',
+        likes: 0,
+        likedBy: [],
+        commentCount: 0,
+        createdAt: serverTimestamp(),
+      }),
+    );
+  });
+
+  it('denies creating a post with preloaded counters', async () => {
+    const alice = testEnv.authenticatedContext('alice');
+    const db = alice.firestore();
+    await seedUserProfile('alice', { displayName: 'Alice' });
+    await assertFails(
+      setDoc(doc(db, 'communityPosts', 'post1'), {
+        userId: 'alice',
+        userName: 'Alice',
+        userAvatar: null,
+        userHandicap: null,
+        text: 'Counter stuffing',
+        likes: 99,
+        likedBy: ['alice'],
+        commentCount: 42,
+        createdAt: serverTimestamp(),
       }),
     );
   });
@@ -257,7 +340,7 @@ describe('Community post rules', () => {
     );
   });
 
-  it('allows incrementing commentCount by 1', async () => {
+  it('denies direct client increments of commentCount', async () => {
     const alice = testEnv.authenticatedContext('alice');
     const db = alice.firestore();
     await testEnv.withSecurityRulesDisabled(async (context) => {
@@ -270,7 +353,7 @@ describe('Community post rules', () => {
         commentCount: 3,
       });
     });
-    await assertSucceeds(
+    await assertFails(
       updateDoc(doc(db, 'communityPosts', 'post1'), {
         commentCount: 4,
       }),
@@ -338,6 +421,29 @@ describe('Community post rules', () => {
     );
   });
 
+  it('denies post owner from changing authored identity fields', async () => {
+    const bob = testEnv.authenticatedContext('bob');
+    const db = bob.firestore();
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const adminDb = context.firestore();
+      await setDoc(doc(adminDb, 'communityPosts', 'post1'), {
+        userId: 'bob',
+        userName: 'Bob',
+        userAvatar: 'https://example.com/bob.jpg',
+        userHandicap: 12,
+        text: 'Hello',
+        likes: 0,
+        likedBy: [],
+        commentCount: 0,
+      });
+    });
+    await assertFails(
+      updateDoc(doc(db, 'communityPosts', 'post1'), {
+        userName: 'Alice',
+      }),
+    );
+  });
+
   it('allows post owner to delete their post', async () => {
     const bob = testEnv.authenticatedContext('bob');
     const db = bob.firestore();
@@ -370,6 +476,31 @@ describe('Community post rules', () => {
     });
     const { deleteDoc } = await import('firebase/firestore');
     await assertFails(deleteDoc(doc(db, 'communityPosts', 'post1')));
+  });
+
+  it('denies direct client creation of comments', async () => {
+    const alice = testEnv.authenticatedContext('alice');
+    const db = alice.firestore();
+    await seedUserProfile('alice', { displayName: 'Alice' });
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const adminDb = context.firestore();
+      await setDoc(doc(adminDb, 'communityPosts', 'post1'), {
+        userId: 'bob',
+        text: 'Hello',
+        likes: 0,
+        likedBy: [],
+        commentCount: 0,
+      });
+    });
+    await assertFails(
+      setDoc(doc(db, 'communityPosts', 'post1', 'comments', 'comment1'), {
+        userId: 'alice',
+        userName: 'Alice',
+        userAvatar: null,
+        text: 'Nice post',
+        createdAt: serverTimestamp(),
+      }),
+    );
   });
 });
 
@@ -421,7 +552,7 @@ describe('User rounds rules', () => {
   });
 });
 
-describe('Content collections — read-only for auth users', () => {
+describe('Content collections — direct client access denied for protected content', () => {
   it('allows auth user to read golf clubs', async () => {
     const alice = testEnv.authenticatedContext('alice');
     const db = alice.firestore();
@@ -450,7 +581,7 @@ describe('Content collections — read-only for auth users', () => {
     await assertSucceeds(getDoc(doc(db, 'articles', 'a1')));
   });
 
-  it('allows auth user to read coach data', async () => {
+  it('denies auth user direct read of coach data', async () => {
     const alice = testEnv.authenticatedContext('alice');
     const db = alice.firestore();
     await testEnv.withSecurityRulesDisabled(async (context) => {
@@ -459,7 +590,46 @@ describe('Content collections — read-only for auth users', () => {
         name: 'Pro',
       });
     });
-    await assertSucceeds(getDoc(doc(db, 'golfCenterCoaches', 'coach1')));
+    await assertFails(getDoc(doc(db, 'golfCenterCoaches', 'coach1')));
+  });
+
+  it('denies auth user direct read of coach course data', async () => {
+    const alice = testEnv.authenticatedContext('alice');
+    const db = alice.firestore();
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const adminDb = context.firestore();
+      await setDoc(
+        doc(adminDb, 'golfCenterCoaches', 'coach1', 'courses', 'course1'),
+        { title: 'Premium Course' },
+      );
+    });
+    await assertFails(
+      getDoc(doc(db, 'golfCenterCoaches', 'coach1', 'courses', 'course1')),
+    );
+  });
+
+  it('denies auth user direct read of golf center video data', async () => {
+    const alice = testEnv.authenticatedContext('alice');
+    const db = alice.firestore();
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const adminDb = context.firestore();
+      await setDoc(doc(adminDb, 'golfCenterVideos', 'videos1'), {
+        drivers: [],
+      });
+    });
+    await assertFails(getDoc(doc(db, 'golfCenterVideos', 'videos1')));
+  });
+
+  it('denies auth user direct read of dormy video data', async () => {
+    const alice = testEnv.authenticatedContext('alice');
+    const db = alice.firestore();
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const adminDb = context.firestore();
+      await setDoc(doc(adminDb, 'dormyVideos', 'videos1'), {
+        chatShow: [],
+      });
+    });
+    await assertFails(getDoc(doc(db, 'dormyVideos', 'videos1')));
   });
 });
 

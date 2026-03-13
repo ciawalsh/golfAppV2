@@ -25,10 +25,7 @@ export default function CoachDetailScreen() {
   const { isFreeTier } = useSubscription();
   const { coaches, isLoading: coachesLoading } = useCoaches();
   const coach = coaches.find((c) => c.id === coachId);
-  const { courses, isLoading, error, refetch } = useCoachCourses(
-    coachId ?? '',
-    coach?.name ?? '',
-  );
+  const { courses, isLoading, error, refetch } = useCoachCourses(coachId ?? '');
 
   const navigateToCourse = useCallback(
     (course: Course) => {

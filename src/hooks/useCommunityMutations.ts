@@ -4,7 +4,6 @@ import {
   setDoc,
   updateDoc,
   collection,
-  writeBatch,
   arrayUnion,
   arrayRemove,
   increment,
@@ -14,6 +13,7 @@ import { db } from '@/lib/firebase';
 import { COLLECTIONS } from '@/constants/collections';
 import { useAuthStore } from '@/stores/authStore';
 import { uploadImage } from '@/services/imageUpload';
+import { createCommunityComment } from '@/services/communityApi';
 import { CommunityPost } from '@/types/community';
 
 // ── Create Post ──
@@ -172,30 +172,12 @@ export function useCreateComment() {
   return useMutation({
     mutationFn: async ({ postId, text }: CreateCommentParams) => {
       if (!user) throw new Error('Not authenticated');
-
-      const batch = writeBatch(db);
-
-      // Create comment doc
-      const commentRef = doc(
-        collection(db, COLLECTIONS.COMMUNITY_POSTS, postId, 'comments'),
-      );
-      batch.set(commentRef, {
-        userId: user.uid,
-        userName: user.displayName,
-        userAvatar: user.photoURL ?? null,
-        text,
-        createdAt: serverTimestamp(),
-      });
-
-      // Increment comment count on parent post
-      const postRef = doc(db, COLLECTIONS.COMMUNITY_POSTS, postId);
-      batch.update(postRef, { commentCount: increment(1) });
-
-      await batch.commit();
+      await createCommunityComment(postId, text);
     },
     onSuccess: (_data, { postId }) => {
       queryClient.invalidateQueries({ queryKey: ['postComments', postId] });
       queryClient.invalidateQueries({ queryKey: ['communityFeed'] });
+      queryClient.invalidateQueries({ queryKey: ['post', postId] });
     },
   });
 }

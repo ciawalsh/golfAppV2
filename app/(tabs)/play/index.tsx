@@ -1,12 +1,20 @@
 import { useMemo } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  StyleSheet,
+  Alert,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRoundStore } from '@/stores/roundStore';
 import { useRounds } from '@/hooks/useRounds';
+import { useDeleteRound } from '@/hooks/useRoundMutations';
 import { formatToPar } from '@/lib/golf';
-import { RoundCard } from '@/components/RoundCard';
+import { SwipeableRoundCard } from '@/components/SwipeableRoundCard';
 import { EmptyState } from '@/components/EmptyState';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
 import { ErrorState } from '@/components/ErrorState';
@@ -18,6 +26,7 @@ export default function PlayScreen() {
   const router = useRouter();
   const activeRound = useRoundStore((s) => s.activeRound);
   const { rounds, isLoading, error, refetch } = useRounds();
+  const deleteRoundMutation = useDeleteRound();
 
   const completedRounds = useMemo(
     () => rounds.filter((r) => !r.inProgress),
@@ -28,6 +37,23 @@ export default function PlayScreen() {
     () => completedRounds.slice(0, 5),
     [completedRounds],
   );
+
+  const confirmDeleteRound = (roundId: string) => {
+    Alert.alert('Delete Round', 'Delete this round from your history?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => {
+          deleteRoundMutation.mutate(roundId, {
+            onError: () => {
+              Alert.alert('Error', 'Failed to delete round. Please try again.');
+            },
+          });
+        },
+      },
+    ]);
+  };
 
   const stats = useMemo(() => {
     if (completedRounds.length === 0) return null;
@@ -137,10 +163,15 @@ export default function PlayScreen() {
           ) : (
             <View style={styles.roundsList}>
               {recentRounds.map((round) => (
-                <RoundCard
+                <SwipeableRoundCard
                   key={round.id}
                   round={round}
                   onPress={() => router.push(`/play/round-detail/${round.id}`)}
+                  onDelete={() => confirmDeleteRound(round.id)}
+                  isDeleting={
+                    deleteRoundMutation.isPending &&
+                    deleteRoundMutation.variables === round.id
+                  }
                 />
               ))}
             </View>

@@ -58,28 +58,84 @@ async function createUserProfileFromCurrent(): Promise<UserProfile | null> {
 
     if (userSnap.exists()) {
       const data = userSnap.data();
+      const profilePatch: Record<string, unknown> = {};
+      const persistedProfile = { ...data };
+
+      if (fallback.displayName && data.displayName !== fallback.displayName) {
+        profilePatch.displayName = fallback.displayName;
+      }
+      if (fallback.email && data.email !== fallback.email) {
+        profilePatch.email = fallback.email;
+      }
+      if (fallback.photoURL && data.photoURL !== fallback.photoURL) {
+        profilePatch.photoURL = fallback.photoURL;
+      }
+
+      if (Object.keys(profilePatch).length > 0) {
+        try {
+          await setDoc(
+            userRef,
+            {
+              ...profilePatch,
+              lastLoginAt: serverTimestamp(),
+            },
+            { merge: true },
+          );
+          Object.assign(persistedProfile, profilePatch);
+        } catch (err) {
+          if (__DEV__)
+            console.warn('Failed to backfill user profile doc:', err);
+        }
+      } else {
+        setDoc(
+          userRef,
+          { lastLoginAt: serverTimestamp() },
+          { merge: true },
+        ).catch((err) => {
+          if (__DEV__) console.warn('Failed to update last login:', err);
+        });
+      }
+
       return {
         ...fallback,
-        createdAt: Number.isFinite(data.createdAt?.toMillis?.())
-          ? data.createdAt.toMillis()
+        displayName:
+          typeof persistedProfile.displayName === 'string' &&
+          persistedProfile.displayName.trim()
+            ? persistedProfile.displayName
+            : fallback.displayName,
+        photoURL:
+          typeof persistedProfile.photoURL === 'string' &&
+          persistedProfile.photoURL
+            ? persistedProfile.photoURL
+            : fallback.photoURL,
+        createdAt: Number.isFinite(persistedProfile.createdAt?.toMillis?.())
+          ? persistedProfile.createdAt.toMillis()
           : 0,
-        subscription: data.subscription ?? DEFAULT_SUBSCRIPTION,
+        subscription: persistedProfile.subscription ?? DEFAULT_SUBSCRIPTION,
         handicap:
-          typeof data.handicap === 'number' && Number.isFinite(data.handicap)
-            ? data.handicap
+          typeof persistedProfile.handicap === 'number' &&
+          Number.isFinite(persistedProfile.handicap)
+            ? persistedProfile.handicap
             : null,
         homeCourse:
-          typeof data.homeCourse === 'string' ? data.homeCourse : null,
+          typeof persistedProfile.homeCourse === 'string'
+            ? persistedProfile.homeCourse
+            : null,
       };
     }
 
-    // New user — create Firestore doc (best-effort)
-    setDoc(userRef, {
-      ...fallback,
+    // New user — create the profile doc before returning so downstream
+    // rules that depend on it can succeed immediately.
+    // Subscription is omitted here; only privileged backends should write it.
+    await setDoc(userRef, {
+      uid: fallback.uid,
+      email: fallback.email,
+      displayName: fallback.displayName,
+      photoURL: fallback.photoURL,
+      handicap: fallback.handicap,
+      homeCourse: fallback.homeCourse,
       createdAt: serverTimestamp(),
       lastLoginAt: serverTimestamp(),
-    }).catch((err) => {
-      if (__DEV__) console.warn('Failed to create user profile doc:', err);
     });
 
     return fallback;

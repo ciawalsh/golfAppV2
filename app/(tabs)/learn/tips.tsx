@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTipVideos } from '@/hooks/useTipVideos';
+import { useSubscription } from '@/hooks/useSubscription';
+import { canAccessContent, isPremiumContent } from '@/lib/contentGating';
 import { VideoCard } from '@/components/VideoCard';
 import { SkeletonLoader } from '@/components/SkeletonLoader';
 import { ErrorState } from '@/components/ErrorState';
@@ -17,6 +19,7 @@ export default function TipsScreen() {
   const { genre: initialGenre } = useLocalSearchParams<{ genre?: string }>();
   const router = useRouter();
   const { tipsByCategory, genres, isLoading, error, refetch } = useTipVideos();
+  const { tier, isFreeTier } = useSubscription();
   const [selectedGenre, setSelectedGenre] = useState(initialGenre ?? 'all');
 
   const filteredTips = useMemo(() => {
@@ -28,6 +31,11 @@ export default function TipsScreen() {
 
   const playVideo = useCallback(
     (video: Video) => {
+      if (!canAccessContent(tier, video.minTierLevel)) {
+        router.push('/(tabs)/more');
+        return;
+      }
+
       router.push({
         pathname: '/player',
         params: {
@@ -37,8 +45,13 @@ export default function TipsScreen() {
         },
       });
     },
-    [router],
+    [router, tier],
   );
+
+  const errorMessage =
+    error instanceof Error && error.message
+      ? error.message
+      : 'Failed to load tips';
 
   const allGenres: (
     | VideoGenre
@@ -107,7 +120,7 @@ export default function TipsScreen() {
   if (error) {
     return (
       <SafeAreaView style={styles.container}>
-        <ErrorState message="Failed to load tips" onRetry={refetch} />
+        <ErrorState message={errorMessage} onRetry={refetch} />
       </SafeAreaView>
     );
   }
@@ -141,7 +154,11 @@ export default function TipsScreen() {
           />
         }
         renderItem={({ item }) => (
-          <VideoCard video={item} onPress={() => playVideo(item)} />
+          <VideoCard
+            video={item}
+            onPress={() => playVideo(item)}
+            locked={isFreeTier && isPremiumContent(item.minTierLevel)}
+          />
         )}
       />
     </SafeAreaView>

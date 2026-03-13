@@ -1,4 +1,11 @@
 import { onRequest } from 'firebase-functions/v2/https';
+import { createCommunityComment } from './community';
+import {
+  getCoachCoursesCatalog,
+  getCoachesCatalog,
+  getDormyVideosCatalog,
+  getTipVideosCatalog,
+} from './content';
 
 export const healthCheck = onRequest(
   { region: 'europe-west2' },
@@ -10,3 +17,11 @@ export const healthCheck = onRequest(
     });
   },
 );
+
+export {
+  createCommunityComment,
+  getCoachesCatalog,
+  getCoachCoursesCatalog,
+  getTipVideosCatalog,
+  getDormyVideosCatalog,
+};

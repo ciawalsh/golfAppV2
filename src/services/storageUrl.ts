@@ -7,7 +7,31 @@ const urlCache = new Map<string, string>();
 
 /** Firebase Storage REST API URL pattern */
 const FIREBASE_STORAGE_RE =
-  /^https:\/\/firebasestorage\.googleapis\.com\/v0\/b\/[^/]+\/o\/(.+?)(\?|$)/;
+  /^https:\/\/firebasestorage\.googleapis\.com\/v0\/b\/([^/]+)\/o\/(.+?)(\?|$)/;
+
+function hasDirectAccessToken(url: string): boolean {
+  return /[?&](token|GoogleAccessId|X-Goog-Algorithm|Signature)=/i.test(url);
+}
+
+function safeDecodeURIComponent(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+function canonicaliseFirebaseDownloadUrl(url: string): string {
+  const match = url.match(FIREBASE_STORAGE_RE);
+  if (!match?.[1] || !match[2]) return url;
+
+  const [, bucket, rawPath] = match;
+  const queryIndex = url.indexOf('?');
+  const query = queryIndex === -1 ? '' : url.slice(queryIndex);
+  const path = safeDecodeURIComponent(rawPath);
+
+  return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(path)}${query}`;
+}
 
 /**
  * Check if a path has a media file extension.
@@ -26,8 +50,8 @@ function hasMediaExtension(path: string): boolean {
  */
 function extractPathFromFirebaseUrl(url: string): string | null {
   const match = url.match(FIREBASE_STORAGE_RE);
-  if (!match?.[1]) return null;
-  return decodeURIComponent(match[1]);
+  if (!match?.[2]) return null;
+  return safeDecodeURIComponent(match[2]);
 }
 
 /**
@@ -39,6 +63,14 @@ function extractPathFromGsUrl(url: string): string | null {
   const slashIdx = withoutScheme.indexOf('/');
   if (slashIdx === -1) return null;
   return withoutScheme.substring(slashIdx + 1);
+}
+
+function extractPathFromBareStoragePath(url: string): string | null {
+  const decodedPath = safeDecodeURIComponent(url.replace(/^\/+/, ''))
+    .replace(/^o\//, '')
+    .replace(/^\/+/, '');
+
+  return decodedPath.includes('/') ? decodedPath : null;
 }
 
 /**
@@ -97,14 +129,23 @@ export async function resolveStorageUrl(
   if (url.startsWith('gs://')) {
     storagePath = extractPathFromGsUrl(url);
   } else if (url.startsWith('https://') || url.startsWith('http://')) {
+    const canonicalUrl = canonicaliseFirebaseDownloadUrl(url);
+
+    // Signed URLs and Firebase download-token URLs are already directly usable.
+    // Re-resolving them through the client SDK now fails for protected media
+    // because Storage rules intentionally deny direct reads.
+    if (hasDirectAccessToken(canonicalUrl)) {
+      return canonicalUrl;
+    }
+
     // Check if this is a pre-resolved Firebase Storage URL with a (possibly stale) token
-    storagePath = extractPathFromFirebaseUrl(url);
+    storagePath = extractPathFromFirebaseUrl(canonicalUrl);
     if (!storagePath) {
       // Not a Firebase Storage URL — return as-is (e.g. Flickr thumbnail)
-      return url;
+      return canonicalUrl;
     }
   } else {
-    return null;
+    storagePath = extractPathFromBareStoragePath(url);
   }
 
   if (!storagePath) return null;

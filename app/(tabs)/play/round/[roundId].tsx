@@ -3,12 +3,10 @@ import { View, Text, Pressable, Alert, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { doc, setDoc } from 'firebase/firestore';
 import { useQueryClient } from '@tanstack/react-query';
-import { db } from '@/lib/firebase';
-import { COLLECTIONS } from '@/constants/collections';
 import { useRoundStore } from '@/stores/roundStore';
 import { useRoundSync } from '@/hooks/useRoundSync';
+import { persistRound } from '@/services/roundApi';
 import { formatToPar, getScoreColor } from '@/lib/golf';
 import { HoleScoreInput } from '@/components/HoleScoreInput';
 import { HoleIndicatorStrip } from '@/components/HoleIndicatorStrip';
@@ -73,21 +71,16 @@ export default function ActiveRoundScreen() {
 
           try {
             // Authoritative write — this is the single source of truth
-            const roundRef = doc(
-              db,
-              COLLECTIONS.USERS,
-              completed.userId,
-              'rounds',
-              completed.id,
-            );
-            await setDoc(roundRef, completed, { merge: true });
+            await persistRound(completed);
           } catch {
             // Sync failure is not critical; round data is still in Firestore
             // from previous syncs
           }
 
           // Invalidate rounds query so Play Home refreshes
-          queryClient.invalidateQueries({ queryKey: ['rounds'] });
+          queryClient.invalidateQueries({
+            queryKey: ['rounds', completed.userId],
+          });
 
           router.replace(`/play/round-detail/${completed.id}`);
         },

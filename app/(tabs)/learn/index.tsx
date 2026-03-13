@@ -38,6 +38,19 @@ export default function LearnScreen() {
     refetch: refetchDormy,
   } = useDormyVideos();
 
+  const coachesErrorMessage =
+    coachesError instanceof Error && coachesError.message
+      ? coachesError.message
+      : 'Failed to load coaches';
+  const tipsErrorMessage =
+    tipsError instanceof Error && tipsError.message
+      ? tipsError.message
+      : 'Failed to load tips';
+  const dormyErrorMessage =
+    dormyError instanceof Error && dormyError.message
+      ? dormyError.message
+      : 'Failed to load content';
+
   const navigateToCoach = useCallback(
     (coach: Coach) => {
       router.push({
@@ -103,10 +116,7 @@ export default function LearnScreen() {
         {/* Section 1: Golf Pro Plans */}
         <SectionHeader title="Golf Pro Plans" />
         {coachesError ? (
-          <ErrorState
-            message="Failed to load coaches"
-            onRetry={refetchCoaches}
-          />
+          <ErrorState message={coachesErrorMessage} onRetry={refetchCoaches} />
         ) : coachesLoading ? (
           renderCoachSkeletons()
         ) : (
@@ -125,7 +135,7 @@ export default function LearnScreen() {
         {/* Section 2: Caddie Tips (Free) */}
         <SectionHeader title="Caddie Tips" />
         {tipsError ? (
-          <ErrorState message="Failed to load tips" onRetry={refetchTips} />
+          <ErrorState message={tipsErrorMessage} onRetry={refetchTips} />
         ) : tipsLoading ? (
           renderGenreSkeletons()
         ) : (
@@ -144,7 +154,7 @@ export default function LearnScreen() {
         {/* Section 3: The Dormy (Premium) */}
         <SectionHeader title="The Dormy" />
         {dormyError ? (
-          <ErrorState message="Failed to load content" onRetry={refetchDormy} />
+          <ErrorState message={dormyErrorMessage} onRetry={refetchDormy} />
         ) : dormyLoading ? (
           renderGenreSkeletons()
         ) : (

@@ -32,18 +32,19 @@ service firebase.storage {
     }
 
     // ──────────────────────────────────────────────
-    // Video & image content — read-only for auth users
-    // Uploaded by admin or Cloud Functions only; no client writes.
-    // Paths match actual bucket structure (case-sensitive).
+    // Protected media content — delivered via signed URLs from Cloud Functions.
+    // Direct client reads are denied so auth-only users cannot bypass entitlement
+    // checks by fetching Storage objects themselves.
     // ──────────────────────────────────────────────
     match /AlexElliotGolfCenter/{allPaths=**} {
-      allow read: if request.auth != null;
+      allow read: if false;
     }
 
     match /DormyVideos/{allPaths=**} {
-      allow read: if request.auth != null;
+      allow read: if false;
     }
 
+    // Public/authenticated coach and article imagery.
     match /ProCoaches/{allPaths=**} {
       allow read: if request.auth != null;
     }

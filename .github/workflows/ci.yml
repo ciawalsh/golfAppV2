@@ -15,7 +15,18 @@ jobs:
           node-version: 20
           cache: npm
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
       - run: npm ci
+
+      - name: Install Functions dependencies
+        run: npm --prefix functions ci
+
+      - name: Build Cloud Functions
+        run: npm --prefix functions run build
 
       - name: TypeScript check
         run: npx tsc --noEmit
@@ -26,9 +37,12 @@ jobs:
       - name: Prettier
         run: npm run format
 
+      - name: Firebase Rules Tests
+        run: npm run test:rules
+
       - name: Secret scan
         run: |
-          FOUND=$(grep -rn "AIza\|sk_live\|sk_test\|Bearer \|apiKey.*=.*['\"]" src/ functions/src/ app/ --include="*.ts" --include="*.tsx" || true)
+          FOUND=$(grep -rn "AIza\|sk_live\|sk_test\|Bearer \|apiKey.*=.*['\"]" src/ functions/src/ app/ app.config.ts --include="*.ts" --include="*.tsx" --include="*.js" || true)
           if [ -n "$FOUND" ]; then
             echo "::error::Potential secrets found in source code:"
             echo "$FOUND"

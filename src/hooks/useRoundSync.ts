@@ -1,9 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { AppState } from 'react-native';
-import { doc, setDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { COLLECTIONS } from '@/constants/collections';
 import { useRoundStore } from '@/stores/roundStore';
+import { persistRound } from '@/services/roundApi';
 import { Round } from '@/types/golf';
 
 /**
@@ -36,14 +34,7 @@ export function useRoundSync() {
     pendingRoundRef.current = null;
 
     try {
-      const roundRef = doc(
-        db,
-        COLLECTIONS.USERS,
-        round.userId,
-        'rounds',
-        round.id,
-      );
-      await setDoc(roundRef, round, { merge: true });
+      await persistRound(round);
 
       if (isMountedRef.current) {
         useRoundStore.getState().markSynced();
@@ -53,21 +44,35 @@ export function useRoundSync() {
     }
   }, []);
 
+  const scheduleSync = useCallback(
+    (round: Round, delayMs = 3000) => {
+      pendingRoundRef.current = round;
+
+      if (timerRef.current) clearTimeout(timerRef.current);
+
+      timerRef.current = setTimeout(() => {
+        void flush();
+      }, delayMs);
+    },
+    [flush],
+  );
+
   useEffect(() => {
     isMountedRef.current = true;
+
+    const currentState = useRoundStore.getState();
+    if (
+      currentState.isDirty &&
+      currentState.activeRound &&
+      currentState.activeRound.inProgress
+    ) {
+      scheduleSync(currentState.activeRound);
+    }
 
     const unsubscribe = useRoundStore.subscribe((state) => {
       if (!state.isDirty || !state.activeRound) return;
 
-      pendingRoundRef.current = state.activeRound;
-
-      // Clear previous timer
-      if (timerRef.current) clearTimeout(timerRef.current);
-
-      // Debounce 3 seconds
-      timerRef.current = setTimeout(() => {
-        flush();
-      }, 3000);
+      scheduleSync(state.activeRound);
     });
 
     // Flush on app background
@@ -85,7 +90,7 @@ export function useRoundSync() {
 
       // Flush on unmount
       if (timerRef.current) clearTimeout(timerRef.current);
-      flush();
+      void flush();
     };
-  }, [flush]);
+  }, [flush, scheduleSync]);
 }

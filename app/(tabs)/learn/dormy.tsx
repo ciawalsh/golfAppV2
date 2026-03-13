@@ -22,6 +22,10 @@ export default function DormyScreen() {
     useDormyVideos();
   const { tier, isFreeTier } = useSubscription();
   const [selectedGenre, setSelectedGenre] = useState(initialGenre ?? 'all');
+  const errorMessage =
+    error instanceof Error && error.message
+      ? error.message
+      : 'Failed to load content';
 
   const filteredVideos = useMemo(() => {
     if (selectedGenre === 'all') {
@@ -88,7 +92,7 @@ export default function DormyScreen() {
   if (error) {
     return (
       <SafeAreaView style={styles.container}>
-        <ErrorState message="Failed to load content" onRetry={refetch} />
+        <ErrorState message={errorMessage} onRetry={refetch} />
       </SafeAreaView>
     );
   }
@@ -146,7 +150,7 @@ export default function DormyScreen() {
           <VideoCard
             video={item}
             onPress={() => handleVideoPress(item)}
-            locked={isFreeTier}
+            locked={isFreeTier && !canAccessContent(tier, item.minTierLevel)}
           />
         )}
       />

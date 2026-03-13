@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Image, ImageProps, View, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '@/constants/colors';
@@ -19,6 +19,10 @@ export function FallbackImage({
   const onError = useCallback(() => {
     setHasError(true);
   }, []);
+
+  useEffect(() => {
+    setHasError(false);
+  }, [uri]);
 
   if (!uri || hasError) {
     return (

@@ -26,10 +26,7 @@ export default function CourseDetailScreen() {
   }>();
   const router = useRouter();
   const { tier, isFreeTier } = useSubscription();
-  const { courses, isLoading, error, refetch } = useCoachCourses(
-    coachId ?? '',
-    coachName ?? '',
-  );
+  const { courses, isLoading, error, refetch } = useCoachCourses(coachId ?? '');
 
   const course = useMemo(
     () => courses.find((c) => c.id === courseId),
@@ -45,11 +42,11 @@ export default function CourseDetailScreen() {
         params: {
           videoUrl: lesson.videoUrl,
           title: lesson.title,
-          coachName: coachName ?? '',
+          coachName: coachName ?? course?.coachName ?? '',
         },
       });
     },
-    [router, tier, coachName],
+    [router, tier, coachName, course?.coachName],
   );
 
   if (isLoading) {
