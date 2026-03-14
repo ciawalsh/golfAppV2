@@ -6,11 +6,13 @@ import { colors } from '@/constants/colors';
 interface FallbackImageProps extends Omit<ImageProps, 'source'> {
   uri: string | undefined;
   fallbackIcon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  fallbackIconSize?: number;
 }
 
 export function FallbackImage({
   uri,
   fallbackIcon = 'image-off-outline',
+  fallbackIconSize = 24,
   style,
   ...props
 }: FallbackImageProps) {
@@ -29,7 +31,7 @@ export function FallbackImage({
       <View style={[styles.placeholder, style]}>
         <MaterialCommunityIcons
           name={fallbackIcon}
-          size={24}
+          size={fallbackIconSize}
           color={colors.grey400}
         />
       </View>

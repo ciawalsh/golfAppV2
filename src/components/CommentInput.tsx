@@ -43,7 +43,7 @@ export function CommentInput({ onSend, isPending }: CommentInputProps) {
           placeholder="Write a comment..."
           placeholderTextColor={colors.textMuted}
           multiline
-          maxLength={500}
+          maxLength={1000}
           editable={!isPending}
         />
         <Pressable

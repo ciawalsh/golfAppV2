@@ -475,7 +475,12 @@ export const getCoachCoursesCatalog = onCall(
 
         const videos = await Promise.all(
           (data.videos ?? []).map((video, index) =>
-            mapVideo(video, `${courseDoc.id}_${index}`, courseDoc.id, tier),
+            mapVideo(
+              video,
+              `${coachId}_${courseDoc.id}_${index}`,
+              courseDoc.id,
+              tier,
+            ),
           ),
         );
 
@@ -537,7 +542,7 @@ export const getTipVideosCatalog = onCall(
 
         const mapped = await Promise.all(
           entries.map((video, index) =>
-            mapVideo(video, `tip_${key}_${index}`, key, tier),
+            mapVideo(video, `tip_${videosDoc.id}_${key}_${index}`, key, tier),
           ),
         );
         const normalisedKey = normaliseVideoType(key);
@@ -596,7 +601,7 @@ export const getDormyVideosCatalog = onCall(
 
         const mapped = await Promise.all(
           entries.map((video, index) =>
-            mapVideo(video, `dormy_${key}_${index}`, key, tier),
+            mapVideo(video, `dormy_${videosDoc.id}_${key}_${index}`, key, tier),
           ),
         );
         const normalisedKey = normaliseVideoType(key);

@@ -25,8 +25,8 @@ export type {
 } from './golf';
 export { CLUB_LABELS } from './golf';
 
-// Re-export community types
-export type { CommunityPost, PostComment, CreatePostInput } from './community';
+// Re-export discussion types
+export type { VideoComment, FirestoreVideoCommentData } from './community';
 
 export type SubscriptionStatus =
   | 'active'

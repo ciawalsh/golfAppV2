@@ -5,7 +5,7 @@ import { storage } from '@/lib/firebase';
  * Upload a local image to Firebase Storage and return the download URL.
  *
  * @param localUri - Local file URI from expo-image-picker
- * @param storagePath - Firebase Storage path (e.g. "community/posts/{id}/image.jpg")
+ * @param storagePath - Firebase Storage path (e.g. "users/{uid}/avatar.jpg")
  */
 export async function uploadImage(
   localUri: string,

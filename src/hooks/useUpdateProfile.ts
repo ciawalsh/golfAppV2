@@ -1,8 +1,9 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { doc, updateDoc } from 'firebase/firestore';
 import { updateProfile } from 'firebase/auth';
 import { db, auth } from '@/lib/firebase';
 import { COLLECTIONS } from '@/constants/collections';
+import type { PublicProfile } from '@/hooks/useUserProfiles';
 import { useAuthStore } from '@/stores/authStore';
 import { uploadImage } from '@/services/imageUpload';
 
@@ -14,6 +15,7 @@ interface ProfileUpdate {
 }
 
 export function useUpdateProfile() {
+  const queryClient = useQueryClient();
   const user = useAuthStore((s) => s.user);
   const setUser = useAuthStore((s) => s.setUser);
 
@@ -67,8 +69,7 @@ export function useUpdateProfile() {
         }
       }
 
-      // Update Zustand store
-      setUser({
+      const nextUser = {
         ...user,
         displayName: update.displayName ?? user.displayName,
         handicap:
@@ -76,7 +77,34 @@ export function useUpdateProfile() {
         homeCourse:
           update.homeCourse !== undefined ? update.homeCourse : user.homeCourse,
         photoURL: photoURL ?? user.photoURL,
-      });
+      };
+
+      // Update Zustand store
+      setUser(nextUser);
+
+      // Keep the read-optimised public profile cache in sync immediately for
+      // the current user so comment threads don't show stale identity data
+      // while the Firestore-triggered projection catches up.
+      queryClient.setQueryData<PublicProfile>(
+        ['publicProfile', user.uid],
+        (currentProfile) => ({
+          displayName:
+            typeof nextUser.displayName === 'string' &&
+            nextUser.displayName.trim()
+              ? nextUser.displayName
+              : 'Anonymous',
+          photoURL: nextUser.photoURL ?? null,
+          handicap:
+            typeof nextUser.handicap === 'number' &&
+            Number.isFinite(nextUser.handicap)
+              ? nextUser.handicap
+              : null,
+          isPremium:
+            currentProfile?.isPremium ??
+            (nextUser.subscription.tier === 'premium_monthly' ||
+              nextUser.subscription.tier === 'premium_annual'),
+        }),
+      );
     },
   });
 }

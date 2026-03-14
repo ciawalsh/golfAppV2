@@ -1,13 +1,16 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { VideoCommentThread } from '@/components/VideoCommentThread';
 import { VideoPlayer } from '@/components/VideoPlayer';
 
 export default function PlayerScreen() {
-  const { videoUrl, title, coachName } = useLocalSearchParams<{
+  const { videoId, videoUrl, title, coachName } = useLocalSearchParams<{
+    videoId?: string;
     videoUrl: string;
     title: string;
     coachName?: string;
   }>();
   const router = useRouter();
+  const hasVideoId = typeof videoId === 'string' && videoId.length > 0;
 
   return (
     <VideoPlayer
@@ -15,6 +18,8 @@ export default function PlayerScreen() {
       title={title ?? 'Video'}
       coachName={coachName}
       onClose={() => router.back()}
-    />
+    >
+      {hasVideoId ? <VideoCommentThread videoId={videoId} /> : null}
+    </VideoPlayer>
   );
 }

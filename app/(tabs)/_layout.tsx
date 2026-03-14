@@ -12,7 +12,6 @@ const TAB_CONFIG: {
 }[] = [
   { name: 'learn', title: 'Learn', icon: 'book-open-variant' },
   { name: 'play', title: 'Play', icon: 'golf-tee' },
-  { name: 'community', title: 'Community', icon: 'account-group' },
   { name: 'news', title: 'News', icon: 'newspaper-variant' },
   { name: 'more', title: 'More', icon: 'dots-horizontal' },
 ];

@@ -13,6 +13,7 @@ import { HoleIndicatorStrip } from '@/components/HoleIndicatorStrip';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { spacing, borderRadius } from '@/constants/spacing';
+import { Round } from '@/types/golf';
 
 export default function ActiveRoundScreen() {
   const router = useRouter();
@@ -77,12 +78,51 @@ export default function ActiveRoundScreen() {
             // from previous syncs
           }
 
+          queryClient.setQueryData<Round[]>(
+            ['rounds', completed.userId],
+            (currentRounds) => {
+              const existingRounds = currentRounds ?? [];
+              return [
+                completed,
+                ...existingRounds.filter((round) => round.id !== completed.id),
+              ];
+            },
+          );
+
           // Invalidate rounds query so Play Home refreshes
-          queryClient.invalidateQueries({
+          void queryClient.invalidateQueries({
             queryKey: ['rounds', completed.userId],
           });
 
-          router.replace(`/play/round-detail/${completed.id}`);
+          Alert.alert(
+            'Round Complete!',
+            `You scored ${completed.totalScore} (${formatToPar(completed.toPar)}) at ${completed.courseName}`,
+            [
+              {
+                text: 'Share Scorecard',
+                onPress: () => {
+                  router.replace({
+                    pathname: '/play/round-detail/[roundId]',
+                    params: {
+                      roundId: completed.id,
+                      share: 'true',
+                    },
+                  });
+                },
+              },
+              {
+                text: 'Skip',
+                style: 'cancel',
+                onPress: () => {
+                  router.replace({
+                    pathname: '/play/round-detail/[roundId]',
+                    params: { roundId: completed.id },
+                  });
+                },
+              },
+            ],
+            { cancelable: false },
+          );
         },
       },
     ]);

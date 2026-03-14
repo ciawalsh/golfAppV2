@@ -74,7 +74,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       'expo-image-picker',
       {
         photosPermission:
-          'SweetSpot Golf uses your photos to let you share images in community posts and set your profile picture.',
+          'SweetSpot Golf uses your photos to set your profile picture.',
       },
     ],
   ],

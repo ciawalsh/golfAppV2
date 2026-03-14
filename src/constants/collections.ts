@@ -10,4 +10,6 @@ export const COLLECTIONS = {
   GOLF_COURSES: 'golfCourses',
   GOLF_TEES: 'golfTees',
   COMMUNITY_POSTS: 'communityPosts',
+  PUBLIC_PROFILES: 'publicProfiles',
+  VIDEO_COMMENTS: 'videoComments',
 } as const;

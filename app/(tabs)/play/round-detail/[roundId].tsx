@@ -1,8 +1,21 @@
-import { useMemo } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import * as Sentry from '@sentry/react-native';
+import * as Sharing from 'expo-sharing';
+import ViewShot, { releaseCapture } from 'react-native-view-shot';
+import { ShareableScorecard } from '@/components/ShareableScorecard';
 import { useRounds } from '@/hooks/useRounds';
 import { formatToPar, getScoreColor } from '@/lib/golf';
 import { ScorecardTable } from '@/components/ScorecardTable';
@@ -14,13 +27,95 @@ import { spacing, borderRadius } from '@/constants/spacing';
 
 export default function RoundDetailScreen() {
   const router = useRouter();
-  const { roundId } = useLocalSearchParams<{ roundId: string }>();
+  const { roundId, share: autoShare } = useLocalSearchParams<{
+    roundId: string;
+    share?: string;
+  }>();
   const { rounds, isLoading } = useRounds();
+  const viewShotRef = useRef<ViewShot | null>(null);
+  const [isSharing, setIsSharing] = useState(false);
+  const hasAutoSharedRef = useRef(false);
+  const isMountedRef = useRef(true);
+  const shareInFlightRef = useRef(false);
 
   const round = useMemo(
     () => rounds.find((r) => r.id === roundId) ?? null,
     [rounds, roundId],
   );
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const handleShare = useCallback(async () => {
+    if (!round || !viewShotRef.current?.capture || shareInFlightRef.current) {
+      return;
+    }
+
+    let capturedUri: string | null = null;
+
+    try {
+      shareInFlightRef.current = true;
+      if (isMountedRef.current) {
+        setIsSharing(true);
+      }
+
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (!isAvailable) {
+        Alert.alert(
+          'Sharing unavailable',
+          'Sharing is not available on this device.',
+        );
+        return;
+      }
+
+      capturedUri = await viewShotRef.current.capture();
+      await Sharing.shareAsync(capturedUri, {
+        mimeType: 'image/png',
+        UTI: 'public.png',
+        dialogTitle: 'Share your scorecard',
+      });
+    } catch (error) {
+      Sentry.captureException(error);
+      Alert.alert(
+        'Unable to share',
+        'We could not generate your scorecard image. Please try again.',
+      );
+    } finally {
+      shareInFlightRef.current = false;
+
+      if (isMountedRef.current) {
+        setIsSharing(false);
+      }
+
+      if (
+        capturedUri &&
+        Platform.OS !== 'web' &&
+        !capturedUri.startsWith('data:')
+      ) {
+        try {
+          releaseCapture(capturedUri);
+        } catch (error) {
+          Sentry.captureException(error);
+        }
+      }
+    }
+  }, [round]);
+
+  useEffect(() => {
+    if (autoShare !== 'true' || !round || hasAutoSharedRef.current) {
+      return;
+    }
+
+    hasAutoSharedRef.current = true;
+    const timer = setTimeout(() => {
+      void handleShare();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [autoShare, handleShare, round]);
 
   if (isLoading) {
     return (
@@ -61,7 +156,14 @@ export default function RoundDetailScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Header title={round.courseName} onBack={() => router.back()} />
+      <Header
+        title={round.courseName}
+        onBack={() => router.back()}
+        onShare={() => {
+          void handleShare();
+        }}
+        isSharing={isSharing}
+      />
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -107,11 +209,29 @@ export default function RoundDetailScreen() {
           <ScorecardTable holes={round.holes} holeCount={round.holeCount} />
         </View>
       </ScrollView>
+
+      <View
+        style={styles.captureContainer}
+        pointerEvents="none"
+        collapsable={false}
+      >
+        <ShareableScorecard round={round} viewShotRef={viewShotRef} />
+      </View>
     </SafeAreaView>
   );
 }
 
-function Header({ title, onBack }: { title: string; onBack: () => void }) {
+function Header({
+  title,
+  onBack,
+  onShare,
+  isSharing,
+}: {
+  title: string;
+  onBack: () => void;
+  onShare?: () => void;
+  isSharing?: boolean;
+}) {
   return (
     <View style={styles.header}>
       <Pressable onPress={onBack} hitSlop={8}>
@@ -124,7 +244,26 @@ function Header({ title, onBack }: { title: string; onBack: () => void }) {
       <Text style={styles.headerTitle} numberOfLines={1}>
         {title}
       </Text>
-      <View style={styles.headerSpacer} />
+      {onShare ? (
+        <Pressable
+          onPress={onShare}
+          disabled={isSharing}
+          hitSlop={8}
+          style={styles.headerAction}
+        >
+          {isSharing ? (
+            <ActivityIndicator color={colors.textPrimary} />
+          ) : (
+            <MaterialCommunityIcons
+              name="share-variant"
+              size={24}
+              color={colors.textPrimary}
+            />
+          )}
+        </Pressable>
+      ) : (
+        <View style={styles.headerAction} />
+      )}
     </View>
   );
 }
@@ -156,8 +295,9 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
-  headerSpacer: {
+  headerAction: {
     width: 24,
+    alignItems: 'center',
   },
   scrollContent: {
     paddingBottom: spacing.xxxl,
@@ -240,5 +380,10 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     marginHorizontal: spacing.lg,
     marginBottom: spacing.md,
+  },
+  captureContainer: {
+    position: 'absolute',
+    left: -10000,
+    top: 0,
   },
 });

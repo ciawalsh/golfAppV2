@@ -46,6 +46,7 @@ export default function CoachDetailScreen() {
       router.push({
         pathname: '/player',
         params: {
+          videoId: `coach-pitch_${coach.id}`,
           videoUrl: coach.videoPitch,
           title: `Meet ${coach.name}`,
           coachName: coach.name,

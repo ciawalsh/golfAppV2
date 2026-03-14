@@ -39,9 +39,9 @@ export default function TipsScreen() {
       router.push({
         pathname: '/player',
         params: {
+          videoId: video.id,
           videoUrl: video.videoUrl,
           title: video.title,
-          thumbnailUrl: video.thumbnailUrl,
         },
       });
     },

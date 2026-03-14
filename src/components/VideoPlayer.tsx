@@ -7,22 +7,29 @@
  *
  * @see https://docs.expo.dev/versions/latest/sdk/video/
  */
-import { useEffect, useCallback, useMemo, useState, useRef } from 'react';
+import {
+  useEffect,
+  useCallback,
+  useMemo,
+  useState,
+  useRef,
+  type ReactNode,
+} from 'react';
 import { View, Text, Pressable, StyleSheet, AppState } from 'react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { resolveStorageUrl, clearUrlCache } from '@/services/storageUrl';
 import { LoadingSpinner } from '@/components/LoadingIndicator';
-import { ErrorState } from '@/components/ErrorState';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
-import { spacing } from '@/constants/spacing';
+import { borderRadius, spacing } from '@/constants/spacing';
 
 interface VideoPlayerProps {
   videoUrl: string;
   title: string;
   coachName?: string;
   onClose: () => void;
+  children?: ReactNode;
 }
 
 export function VideoPlayer({
@@ -30,11 +37,13 @@ export function VideoPlayer({
   title,
   coachName,
   onClose,
+  children,
 }: VideoPlayerProps) {
   const [resolvedUrl, setResolvedUrl] = useState<string | null>(null);
   const [isResolving, setIsResolving] = useState(true);
   const [resolveError, setResolveError] = useState(false);
   const isMountedRef = useRef(true);
+  const hasBody = children != null;
 
   // Resolve gs:// URLs on mount
   useEffect(() => {
@@ -90,10 +99,12 @@ export function VideoPlayer({
   if (isResolving) {
     return (
       <View style={styles.container}>
-        <Header title={title} coachName={coachName} onClose={onClose} />
-        <View style={styles.centered}>
-          <LoadingSpinner size={48} />
-          <Text style={styles.loadingText}>Loading video...</Text>
+        <View style={[styles.playerSection, styles.playerSectionFull]}>
+          <Header title={title} coachName={coachName} onClose={onClose} />
+          <View style={styles.centered}>
+            <LoadingSpinner size={48} />
+            <Text style={styles.loadingText}>Loading video...</Text>
+          </View>
         </View>
       </View>
     );
@@ -102,19 +113,23 @@ export function VideoPlayer({
   if (resolveError || !resolvedUrl) {
     return (
       <View style={styles.container}>
-        <Header title={title} coachName={coachName} onClose={onClose} />
-        <ErrorState
-          message="Failed to load video. Please try again."
-          onRetry={handleRetry}
-        />
+        <View style={[styles.playerSection, styles.playerSectionFull]}>
+          <Header title={title} coachName={coachName} onClose={onClose} />
+          <PlaybackErrorState onRetry={handleRetry} />
+        </View>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Header title={title} coachName={coachName} onClose={onClose} />
-      <PlayerView url={resolvedUrl} />
+      <View
+        style={[styles.playerSection, !hasBody && styles.playerSectionFull]}
+      >
+        <Header title={title} coachName={coachName} onClose={onClose} />
+        <PlayerView url={resolvedUrl} expanded={!hasBody} />
+      </View>
+      {hasBody ? <View style={styles.body}>{children}</View> : null}
     </View>
   );
 }
@@ -152,7 +167,7 @@ function Header({
   );
 }
 
-function PlayerView({ url }: { url: string }) {
+function PlayerView({ url, expanded }: { url: string; expanded: boolean }) {
   // Use VideoSourceObject so AVPlayer gets a content-type hint for
   // Firebase Storage URLs that lack a file extension.
   const source = useMemo(
@@ -180,7 +195,12 @@ function PlayerView({ url }: { url: string }) {
   }, [player]);
 
   return (
-    <View style={styles.playerContainer}>
+    <View
+      style={[
+        styles.playerContainer,
+        expanded && styles.playerContainerExpanded,
+      ]}
+    >
       <VideoView
         player={player}
         style={styles.player}
@@ -191,10 +211,40 @@ function PlayerView({ url }: { url: string }) {
   );
 }
 
+function PlaybackErrorState({ onRetry }: { onRetry: () => void }) {
+  return (
+    <View style={styles.centered}>
+      <MaterialCommunityIcons
+        name="alert-circle-outline"
+        size={48}
+        color={colors.error}
+      />
+      <Text style={styles.loadingText}>Failed to load video.</Text>
+      <Pressable style={styles.retryButton} onPress={onRetry}>
+        <MaterialCommunityIcons
+          name="refresh"
+          size={18}
+          color={colors.textLight}
+        />
+        <Text style={styles.retryButtonText}>Try Again</Text>
+      </Pressable>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.background,
+  },
+  playerSection: {
     backgroundColor: colors.videoPlayerBg,
+  },
+  playerSectionFull: {
+    flex: 1,
+  },
+  body: {
+    flex: 1,
   },
   header: {
     flexDirection: 'row',
@@ -237,9 +287,26 @@ const styles = StyleSheet.create({
     ...typography.bodySmall,
     color: colors.grey400,
   },
+  retryButton: {
+    alignItems: 'center',
+    backgroundColor: colors.secondary,
+    borderRadius: borderRadius.sm,
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginTop: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+  },
+  retryButtonText: {
+    ...typography.button,
+    color: colors.textLight,
+  },
   playerContainer: {
-    flex: 1,
     justifyContent: 'center',
+    paddingBottom: spacing.lg,
+  },
+  playerContainerExpanded: {
+    flex: 1,
   },
   player: {
     width: '100%',

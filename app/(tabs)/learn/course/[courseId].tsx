@@ -40,6 +40,7 @@ export default function CourseDetailScreen() {
       router.push({
         pathname: '/player',
         params: {
+          videoId: lesson.id,
           videoUrl: lesson.videoUrl,
           title: lesson.title,
           coachName: coachName ?? course?.coachName ?? '',
