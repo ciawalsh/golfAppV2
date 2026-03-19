@@ -6,7 +6,7 @@ import type { VideoComment } from '@/types/community';
 import { formatTimeAgo } from '@/lib/formatTimeAgo';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
-import { borderRadius, spacing } from '@/constants/spacing';
+import { spacing } from '@/constants/spacing';
 
 interface CommentItemProps {
   comment: VideoComment;
@@ -33,35 +33,36 @@ export function CommentItem({
         size={32}
       />
       <View style={styles.content}>
-        <View style={styles.header}>
-          <View style={styles.identity}>
-            <Text style={styles.userName} numberOfLines={1}>
-              {profile.displayName}
-            </Text>
-            {profile.handicap !== null ? (
-              <View style={styles.handicapBadge}>
-                <Text style={styles.handicapText}>HCP {profile.handicap}</Text>
-              </View>
-            ) : null}
-          </View>
+        <View style={styles.topRow}>
+          <Text style={styles.userName} numberOfLines={1}>
+            {profile.displayName}
+          </Text>
+          {profile.handicap !== null ? (
+            <>
+              <Text style={styles.dot}>·</Text>
+              <Text style={styles.handicapText}>HCP {profile.handicap}</Text>
+            </>
+          ) : null}
+          <Text style={styles.dot}>·</Text>
           <Text style={styles.timeAgo}>{formatTimeAgo(comment.createdAt)}</Text>
+          <View style={styles.spacer} />
+          <Pressable
+            style={styles.likeButton}
+            onPress={onLike}
+            disabled={!canLike}
+            hitSlop={8}
+          >
+            <MaterialCommunityIcons
+              name={isLiked ? 'heart' : 'heart-outline'}
+              size={16}
+              color={isLiked ? colors.error : colors.textSecondary}
+            />
+            <Text style={[styles.likeCount, isLiked && styles.likeCountActive]}>
+              {comment.likes}
+            </Text>
+          </Pressable>
         </View>
         <Text style={styles.text}>{comment.text}</Text>
-        <Pressable
-          style={[styles.likeButton, !canLike && styles.likeButtonDisabled]}
-          onPress={onLike}
-          disabled={!canLike}
-          hitSlop={8}
-        >
-          <MaterialCommunityIcons
-            name={isLiked ? 'heart' : 'heart-outline'}
-            size={18}
-            color={isLiked ? colors.error : colors.textMuted}
-          />
-          <Text style={[styles.likeCount, isLiked && styles.likeCountActive]}>
-            {comment.likes}
-          </Text>
-        </Pressable>
       </View>
     </View>
   );
@@ -70,67 +71,55 @@ export function CommentItem({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
     gap: spacing.sm,
   },
   content: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.sm,
-  },
-  identity: {
-    flex: 1,
+  topRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap',
     gap: spacing.xs,
   },
   userName: {
-    ...typography.bodySmall,
+    ...typography.callout,
     color: colors.textPrimary,
     fontWeight: '600',
     flexShrink: 1,
   },
-  timeAgo: {
-    ...typography.caption,
-    color: colors.textMuted,
-  },
-  handicapBadge: {
-    backgroundColor: colors.grey100,
-    borderRadius: borderRadius.xs,
-    paddingHorizontal: spacing.xs,
-    paddingVertical: 1,
+  dot: {
+    ...typography.caption1,
+    color: colors.textTertiary,
   },
   handicapText: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    fontSize: 10,
+    ...typography.caption1,
+    color: colors.accent,
   },
-  text: {
-    ...typography.bodySmall,
-    color: colors.textPrimary,
-    marginTop: 2,
-    lineHeight: 20,
+  timeAgo: {
+    ...typography.caption1,
+    color: colors.textTertiary,
+  },
+  spacer: {
+    flex: 1,
   },
   likeButton: {
-    alignItems: 'center',
-    alignSelf: 'flex-start',
     flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing.xs,
-    marginTop: spacing.sm,
-  },
-  likeButtonDisabled: {
-    opacity: 0.6,
   },
   likeCount: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
   },
   likeCountActive: {
     color: colors.error,
+  },
+  text: {
+    ...typography.callout,
+    color: colors.textPrimary,
+    marginTop: 2,
+    lineHeight: 20,
   },
 });

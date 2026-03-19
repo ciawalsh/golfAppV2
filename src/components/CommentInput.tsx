@@ -1,12 +1,5 @@
 import { useState } from 'react';
-import {
-  View,
-  TextInput,
-  Pressable,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-} from 'react-native';
+import { View, TextInput, Pressable, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
@@ -31,35 +24,30 @@ export function CommentInput({ onSend, isPending }: CommentInputProps) {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={90}
-    >
-      <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          value={text}
-          onChangeText={setText}
-          placeholder="Write a comment..."
-          placeholderTextColor={colors.textMuted}
-          multiline
-          maxLength={1000}
-          editable={!isPending}
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        value={text}
+        onChangeText={setText}
+        placeholder="Write a comment..."
+        placeholderTextColor={colors.textSecondary}
+        multiline
+        maxLength={1000}
+        editable={!isPending}
+      />
+      <Pressable
+        style={[styles.sendButton, !canSend && styles.sendButtonDisabled]}
+        onPress={handleSend}
+        disabled={!canSend}
+        hitSlop={8}
+      >
+        <MaterialCommunityIcons
+          name="send"
+          size={22}
+          color={canSend ? colors.accent : colors.textSecondary}
         />
-        <Pressable
-          style={[styles.sendButton, !canSend && styles.sendButtonDisabled]}
-          onPress={handleSend}
-          disabled={!canSend}
-          hitSlop={8}
-        >
-          <MaterialCommunityIcons
-            name="send"
-            size={22}
-            color={canSend ? colors.secondary : colors.grey400}
-          />
-        </Pressable>
-      </View>
-    </KeyboardAvoidingView>
+      </Pressable>
+    </View>
   );
 }
 
@@ -70,14 +58,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
+    borderTopColor: colors.separatorLight,
     backgroundColor: colors.surface,
     gap: spacing.sm,
   },
   input: {
     ...typography.body,
     flex: 1,
-    backgroundColor: colors.grey100,
+    backgroundColor: colors.surface,
     borderRadius: borderRadius.lg,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,

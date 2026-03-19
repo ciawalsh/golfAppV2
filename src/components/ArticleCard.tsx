@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   description: {
-    ...typography.caption,
+    ...typography.caption1,
     color: colors.textSecondary,
   },
   meta: {
@@ -82,16 +82,16 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
   },
   source: {
-    ...typography.caption,
-    color: colors.secondary,
+    ...typography.caption1,
+    color: colors.accent,
     fontWeight: '600',
   },
   dot: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
   },
   date: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
   },
 });

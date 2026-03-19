@@ -162,7 +162,7 @@ export default function ActiveRoundScreen() {
             <MaterialCommunityIcons
               name="map-marker-radius"
               size={22}
-              color={colors.secondary}
+              color={colors.accent}
             />
           </Pressable>
           <Pressable onPress={handleEndRound} hitSlop={8}>
@@ -204,7 +204,7 @@ export default function ActiveRoundScreen() {
           <MaterialCommunityIcons
             name="chevron-left"
             size={32}
-            color={isFirstHole ? colors.grey300 : colors.textPrimary}
+            color={isFirstHole ? colors.textTertiary : colors.textPrimary}
           />
         </Pressable>
 
@@ -221,7 +221,7 @@ export default function ActiveRoundScreen() {
           <MaterialCommunityIcons
             name="chevron-right"
             size={32}
-            color={isLastHole ? colors.grey300 : colors.textPrimary}
+            color={isLastHole ? colors.textTertiary : colors.textPrimary}
           />
         </Pressable>
       </View>
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
   },
   courseName: {
-    ...typography.h3,
+    ...typography.title3,
     color: colors.textPrimary,
     flex: 1,
     marginRight: spacing.md,
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   endRoundText: {
-    ...typography.bodySmall,
+    ...typography.callout,
     color: colors.error,
     fontWeight: '700',
   },
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   runningLabel: {
-    ...typography.bodySmall,
+    ...typography.callout,
     color: colors.textSecondary,
   },
   runningToPar: {
@@ -284,8 +284,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   runningScore: {
-    ...typography.bodySmall,
-    color: colors.textMuted,
+    ...typography.callout,
+    color: colors.textSecondary,
   },
   navRow: {
     flexDirection: 'row',
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: borderRadius.round,
-    backgroundColor: colors.grey100,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -306,8 +306,8 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   holeCounter: {
-    ...typography.bodySmall,
-    color: colors.textMuted,
+    ...typography.callout,
+    color: colors.textSecondary,
     fontWeight: '600',
   },
   noRound: {
@@ -321,13 +321,13 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   backButton: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.accent,
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.md,
     borderRadius: borderRadius.md,
   },
   backButtonText: {
     ...typography.button,
-    color: colors.textLight,
+    color: colors.textPrimary,
   },
 });

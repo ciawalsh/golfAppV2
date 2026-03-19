@@ -38,22 +38,15 @@ export const CourseListItem = React.memo(function CourseListItem({
         <Text style={styles.title} numberOfLines={2}>
           {course.title}
         </Text>
-        <View style={styles.meta}>
-          <MaterialCommunityIcons
-            name="play-circle-outline"
-            size={14}
-            color={colors.textMuted}
-          />
-          <Text style={styles.metaText}>
-            {course.videos.length}{' '}
-            {course.videos.length === 1 ? 'lesson' : 'lessons'}
-          </Text>
-        </View>
+        <Text style={styles.metaText}>
+          {course.videos.length}{' '}
+          {course.videos.length === 1 ? 'lesson' : 'lessons'}
+        </Text>
       </View>
       <MaterialCommunityIcons
         name="chevron-right"
         size={20}
-        color={colors.grey400}
+        color={colors.textTertiary}
       />
     </Pressable>
   );
@@ -63,19 +56,16 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: spacing.md,
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.md,
-    marginHorizontal: spacing.lg,
-    marginBottom: spacing.sm,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg,
     gap: spacing.md,
   },
   thumbnail: {
-    width: 72,
-    height: 54,
-    borderRadius: borderRadius.sm,
+    width: 90,
+    height: 90,
+    borderRadius: borderRadius.md,
     overflow: 'hidden',
-    backgroundColor: colors.grey100,
+    backgroundColor: colors.backgroundSecondary,
   },
   image: {
     width: '100%',
@@ -92,17 +82,11 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   title: {
-    ...typography.body,
+    ...typography.headline,
     color: colors.textPrimary,
-    fontWeight: '600',
-  },
-  meta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
   },
   metaText: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
   },
 });

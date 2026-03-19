@@ -44,7 +44,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         origin: 'https://sweetspot.golf',
       },
     ],
-    'expo-font',
     'expo-apple-authentication',
     [
       '@react-native-google-signin/google-signin',

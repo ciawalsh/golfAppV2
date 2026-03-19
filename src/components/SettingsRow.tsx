@@ -43,7 +43,7 @@ export function SettingsRow({
         <MaterialCommunityIcons
           name="chevron-right"
           size={20}
-          color={colors.grey400}
+          color={colors.textSecondary}
         />
       ) : null}
     </Pressable>
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     color: colors.error,
   },
   value: {
-    ...typography.bodySmall,
-    color: colors.textMuted,
+    ...typography.callout,
+    color: colors.textSecondary,
   },
 });

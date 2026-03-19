@@ -9,6 +9,7 @@ interface Coach {
   id: string;
   name: string;
   bio: string;
+  shortBio: string;
   profilePic: string;
   image: string;
   videoPitch?: string;
@@ -42,6 +43,7 @@ interface Video {
 interface FirestoreCoachData {
   name?: string;
   bio?: string;
+  shortBio?: string;
   profilePic?: string;
   image?: string;
   videoPitch?: string;
@@ -418,6 +420,7 @@ export const getCoachesCatalog = onCall({ region: REGION }, async (request) => {
         id: coachDoc.id,
         name: data.name,
         bio: data.bio ?? '',
+        shortBio: data.shortBio ?? '',
         // Legacy coach docs often already store public download URLs, sometimes
         // from older buckets. Preserve those if re-signing is not possible.
         profilePic: await signStorageUrl(data.profilePic, {

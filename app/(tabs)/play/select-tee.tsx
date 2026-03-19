@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   headerTitle: {
-    ...typography.h3,
+    ...typography.title3,
     color: colors.textPrimary,
     flex: 1,
     textAlign: 'center',
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   startButton: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.accent,
     paddingVertical: spacing.lg,
     borderRadius: borderRadius.md,
     alignItems: 'center',
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   },
   startButtonText: {
     ...typography.button,
-    color: colors.textLight,
+    color: colors.textPrimary,
     fontWeight: '700',
   },
 });

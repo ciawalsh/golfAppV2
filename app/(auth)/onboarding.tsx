@@ -19,11 +19,7 @@ export default function OnboardingScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <MaterialCommunityIcons
-          name="golf"
-          size={96}
-          color={colors.secondary}
-        />
+        <MaterialCommunityIcons name="golf" size={96} color={colors.accent} />
         <Text style={styles.title}>Welcome to SweetSpot</Text>
         <Text style={styles.description}>
           Improve your golf game with lessons from PGA and European Tour
@@ -51,8 +47,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xxl,
   },
   title: {
-    ...typography.h1,
-    color: colors.primary,
+    ...typography.title1,
+    color: colors.textPrimary,
     marginTop: spacing.xxl,
     textAlign: 'center',
   },
@@ -67,13 +63,13 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xxl,
   },
   button: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.accent,
     borderRadius: 12,
     paddingVertical: spacing.lg,
     alignItems: 'center',
   },
   buttonText: {
     ...typography.button,
-    color: colors.textLight,
+    color: colors.textPrimary,
   },
 });

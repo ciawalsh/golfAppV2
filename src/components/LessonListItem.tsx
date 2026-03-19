@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { toTitleCase } from '@/lib/toTitleCase';
 import { FallbackImage } from '@/components/FallbackImage';
-import { PremiumBadge } from '@/components/PremiumBadge';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { spacing, borderRadius } from '@/constants/spacing';
@@ -21,26 +21,32 @@ export const LessonListItem = React.memo(function LessonListItem({
   onPress,
   locked = false,
 }: LessonListItemProps) {
+  const formattedDuration = lesson.duration
+    ? /^\d+$/.test(lesson.duration)
+      ? `${lesson.duration} min`
+      : lesson.duration
+    : null;
+
   return (
     <Pressable style={styles.container} onPress={onPress} disabled={locked}>
-      <Text style={styles.index}>{index + 1}</Text>
       <View style={styles.thumbnail}>
         <FallbackImage
           uri={lesson.thumbnailUrl}
-          style={styles.image}
+          style={styles.thumbnailImage}
           resizeMode="cover"
-          fallbackIcon="play-circle"
+          fallbackIcon="play-circle-outline"
         />
-        {locked ? (
-          <View style={styles.lockOverlay}>
-            <PremiumBadge size="small" />
+        {formattedDuration ? (
+          <View style={styles.durationBadge}>
+            <Text style={styles.durationBadgeText}>{formattedDuration}</Text>
           </View>
-        ) : (
-          <View style={styles.playOverlay}>
+        ) : null}
+        {locked && (
+          <View style={styles.lockOverlay}>
             <MaterialCommunityIcons
-              name="play"
+              name="lock"
               size={20}
-              color={colors.textLight}
+              color={colors.textPrimary}
             />
           </View>
         )}
@@ -50,12 +56,23 @@ export const LessonListItem = React.memo(function LessonListItem({
           style={[styles.title, locked && styles.titleLocked]}
           numberOfLines={2}
         >
-          {lesson.title}
+          {index + 1}. {toTitleCase(lesson.title)}
         </Text>
-        {lesson.duration ? (
-          <Text style={styles.duration}>{lesson.duration}</Text>
+        {lesson.description ? (
+          <Text style={styles.description} numberOfLines={2}>
+            {lesson.description}
+          </Text>
+        ) : formattedDuration ? (
+          <Text style={styles.description}>{formattedDuration}</Text>
         ) : null}
       </View>
+      {!locked && (
+        <MaterialCommunityIcons
+          name="play-circle-outline"
+          size={24}
+          color={colors.textSecondary}
+        />
+      )}
     </Pressable>
   );
 });
@@ -64,31 +81,33 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: spacing.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
     gap: spacing.md,
   },
-  index: {
-    ...typography.body,
-    color: colors.textMuted,
-    width: 20,
-    textAlign: 'center',
-  },
   thumbnail: {
-    width: 80,
-    height: 56,
+    width: 100,
+    aspectRatio: 16 / 9,
     borderRadius: borderRadius.sm,
     overflow: 'hidden',
-    backgroundColor: colors.grey100,
+    backgroundColor: colors.backgroundSecondary,
   },
-  image: {
+  thumbnailImage: {
     width: '100%',
     height: '100%',
   },
-  playOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.videoPlayOverlayAlt,
+  durationBadge: {
+    position: 'absolute',
+    bottom: spacing.xs,
+    left: spacing.xs,
+    backgroundColor: colors.durationBadgeBg,
+    borderRadius: borderRadius.xs,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+  },
+  durationBadgeText: {
+    ...typography.caption2,
+    color: colors.textPrimary,
   },
   lockOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -101,14 +120,14 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   title: {
-    ...typography.body,
+    ...typography.headline,
     color: colors.textPrimary,
   },
   titleLocked: {
-    color: colors.textMuted,
+    color: colors.textSecondary,
   },
-  duration: {
-    ...typography.caption,
-    color: colors.textMuted,
+  description: {
+    ...typography.caption1,
+    color: colors.textSecondary,
   },
 });

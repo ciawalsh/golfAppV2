@@ -18,6 +18,7 @@ import {
 import { View, Text, Pressable, StyleSheet, AppState } from 'react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { resolveStorageUrl, clearUrlCache } from '@/services/storageUrl';
 import { LoadingSpinner } from '@/components/LoadingIndicator';
 import { colors } from '@/constants/colors';
@@ -39,6 +40,7 @@ export function VideoPlayer({
   onClose,
   children,
 }: VideoPlayerProps) {
+  const insets = useSafeAreaInsets();
   const [resolvedUrl, setResolvedUrl] = useState<string | null>(null);
   const [isResolving, setIsResolving] = useState(true);
   const [resolveError, setResolveError] = useState(false);
@@ -100,7 +102,12 @@ export function VideoPlayer({
     return (
       <View style={styles.container}>
         <View style={[styles.playerSection, styles.playerSectionFull]}>
-          <Header title={title} coachName={coachName} onClose={onClose} />
+          <Header
+            title={title}
+            coachName={coachName}
+            onClose={onClose}
+            topInset={insets.top}
+          />
           <View style={styles.centered}>
             <LoadingSpinner size={48} />
             <Text style={styles.loadingText}>Loading video...</Text>
@@ -114,7 +121,12 @@ export function VideoPlayer({
     return (
       <View style={styles.container}>
         <View style={[styles.playerSection, styles.playerSectionFull]}>
-          <Header title={title} coachName={coachName} onClose={onClose} />
+          <Header
+            title={title}
+            coachName={coachName}
+            onClose={onClose}
+            topInset={insets.top}
+          />
           <PlaybackErrorState onRetry={handleRetry} />
         </View>
       </View>
@@ -126,7 +138,12 @@ export function VideoPlayer({
       <View
         style={[styles.playerSection, !hasBody && styles.playerSectionFull]}
       >
-        <Header title={title} coachName={coachName} onClose={onClose} />
+        <Header
+          title={title}
+          coachName={coachName}
+          onClose={onClose}
+          topInset={insets.top}
+        />
         <PlayerView url={resolvedUrl} expanded={!hasBody} />
       </View>
       {hasBody ? <View style={styles.body}>{children}</View> : null}
@@ -138,18 +155,20 @@ function Header({
   title,
   coachName,
   onClose,
+  topInset,
 }: {
   title: string;
   coachName?: string;
   onClose: () => void;
+  topInset: number;
 }) {
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { paddingTop: topInset + spacing.sm }]}>
       <Pressable style={styles.closeButton} onPress={onClose} hitSlop={8}>
         <MaterialCommunityIcons
           name="close"
           size={24}
-          color={colors.textLight}
+          color={colors.textPrimary}
         />
       </Pressable>
       <View style={styles.headerInfo}>
@@ -224,7 +243,7 @@ function PlaybackErrorState({ onRetry }: { onRetry: () => void }) {
         <MaterialCommunityIcons
           name="refresh"
           size={18}
-          color={colors.textLight}
+          color={colors.textPrimary}
         />
         <Text style={styles.retryButtonText}>Try Again</Text>
       </Pressable>
@@ -251,7 +270,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
-    paddingTop: spacing.xxl,
     gap: spacing.md,
   },
   closeButton: {
@@ -270,12 +288,12 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.body,
-    color: colors.textLight,
+    color: colors.textPrimary,
     fontWeight: '600',
   },
   coachName: {
-    ...typography.caption,
-    color: colors.grey400,
+    ...typography.caption1,
+    color: colors.textSecondary,
   },
   centered: {
     flex: 1,
@@ -284,12 +302,12 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   loadingText: {
-    ...typography.bodySmall,
-    color: colors.grey400,
+    ...typography.callout,
+    color: colors.textSecondary,
   },
   retryButton: {
     alignItems: 'center',
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.accent,
     borderRadius: borderRadius.sm,
     flexDirection: 'row',
     gap: spacing.sm,
@@ -299,7 +317,7 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     ...typography.button,
-    color: colors.textLight,
+    color: colors.textPrimary,
   },
   playerContainer: {
     justifyContent: 'center',

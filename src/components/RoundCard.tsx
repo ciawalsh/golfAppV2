@@ -57,7 +57,7 @@ export function RoundCard({ round, onPress }: RoundCardProps) {
       <MaterialCommunityIcons
         name="chevron-right"
         size={20}
-        color={colors.grey400}
+        color={colors.textSecondary}
       />
     </Pressable>
   );
@@ -82,13 +82,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   meta: {
-    ...typography.caption,
+    ...typography.caption1,
     color: colors.textSecondary,
     marginTop: 2,
   },
   date: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
     marginTop: 2,
   },
   right: {
@@ -96,27 +96,27 @@ const styles = StyleSheet.create({
     minWidth: 48,
   },
   score: {
-    ...typography.h2,
+    ...typography.title2,
     color: colors.textPrimary,
     fontWeight: '700',
   },
   toPar: {
-    ...typography.bodySmall,
+    ...typography.callout,
     fontWeight: '600',
   },
   through: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
   },
   inProgressBadge: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.accent,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.xs,
   },
   inProgressText: {
-    ...typography.caption,
-    color: colors.textLight,
+    ...typography.caption1,
+    color: colors.textPrimary,
     fontWeight: '600',
   },
 });

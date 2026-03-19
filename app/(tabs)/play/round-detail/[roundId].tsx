@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   headerTitle: {
-    ...typography.h3,
+    ...typography.title3,
     color: colors.textPrimary,
     flex: 1,
     textAlign: 'center',
@@ -310,22 +310,22 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   clubName: {
-    ...typography.h3,
+    ...typography.title3,
     color: colors.textPrimary,
   },
   teeInfo: {
-    ...typography.bodySmall,
+    ...typography.callout,
     color: colors.textSecondary,
     marginTop: spacing.xs,
   },
   ratingInfo: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
     marginTop: spacing.xs,
   },
   dateText: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
     marginTop: spacing.sm,
   },
   scoreSummary: {
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingRight: spacing.xl,
     borderRightWidth: 1,
-    borderRightColor: colors.borderLight,
+    borderRightColor: colors.separatorLight,
     minWidth: 80,
   },
   totalScore: {
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   toParBig: {
-    ...typography.h3,
+    ...typography.title3,
     fontWeight: '700',
   },
   scoreDetails: {
@@ -363,20 +363,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scoreStatValue: {
-    ...typography.h2,
+    ...typography.title2,
     color: colors.textPrimary,
     fontWeight: '700',
   },
   scoreStatLabel: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
     marginTop: spacing.xs,
   },
   scorecardSection: {
     marginTop: spacing.sm,
   },
   sectionTitle: {
-    ...typography.h3,
+    ...typography.title3,
     color: colors.textPrimary,
     marginHorizontal: spacing.lg,
     marginBottom: spacing.md,

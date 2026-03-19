@@ -180,7 +180,7 @@ export default function NewsScreen() {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
-            tintColor={colors.secondary}
+            tintColor={colors.accent}
           />
         }
         contentContainerStyle={styles.listContent}
@@ -195,13 +195,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   screenTitle: {
-    ...typography.h2,
+    ...typography.title2,
     color: colors.textPrimary,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
   },
   listContent: {
-    paddingBottom: spacing.xxl,
+    paddingBottom: 100,
   },
   skeletonList: {
     paddingHorizontal: spacing.lg,

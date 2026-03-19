@@ -32,7 +32,7 @@ export function FallbackImage({
         <MaterialCommunityIcons
           name={fallbackIcon}
           size={fallbackIconSize}
-          color={colors.grey400}
+          color={colors.textSecondary}
         />
       </View>
     );
@@ -43,7 +43,7 @@ export function FallbackImage({
 
 const styles = StyleSheet.create({
   placeholder: {
-    backgroundColor: colors.grey100,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },

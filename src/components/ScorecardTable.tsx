@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   sectionLabel: {
-    ...typography.bodySmall,
+    ...typography.callout,
     color: colors.textSecondary,
     fontWeight: '600',
     marginBottom: spacing.xs,
@@ -124,8 +124,8 @@ const styles = StyleSheet.create({
     paddingRight: spacing.xs,
   },
   labelText: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
     fontWeight: '600',
   },
   cell: {
@@ -137,15 +137,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 1,
   },
   cellText: {
-    ...typography.caption,
+    ...typography.caption1,
     color: colors.textPrimary,
     fontWeight: '500',
   },
   cellTextLight: {
-    color: colors.textLight,
+    color: colors.textPrimary,
   },
   totalCell: {
-    backgroundColor: colors.grey100,
+    backgroundColor: colors.surface,
     marginLeft: spacing.xs,
     width: 40,
   },

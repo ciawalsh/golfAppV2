@@ -39,7 +39,7 @@ export function HoleScoreInput({
           <MaterialCommunityIcons
             name="minus"
             size={32}
-            color={canDecrement ? colors.textPrimary : colors.grey300}
+            color={canDecrement ? colors.textPrimary : colors.textTertiary}
           />
         </Pressable>
 
@@ -47,7 +47,7 @@ export function HoleScoreInput({
           <Text
             style={[
               styles.scoreText,
-              { color: hole.score != null ? scoreColor : colors.textMuted },
+              { color: hole.score != null ? scoreColor : colors.textSecondary },
             ]}
           >
             {displayScore}
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xl,
   },
   holeLabel: {
-    ...typography.h1,
+    ...typography.title1,
     color: colors.textPrimary,
     fontWeight: '700',
   },
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: colors.grey100,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   toParLabel: {
-    ...typography.caption,
+    ...typography.caption1,
     fontWeight: '700',
     marginTop: -4,
   },

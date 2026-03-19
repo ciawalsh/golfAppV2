@@ -25,7 +25,7 @@ export function ErrorState({
         <MaterialCommunityIcons
           name="refresh"
           size={18}
-          color={colors.textLight}
+          color={colors.textPrimary}
         />
         <Text style={styles.retryText}>Try Again</Text>
       </Pressable>
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.accent,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.sm,
@@ -58,6 +58,6 @@ const styles = StyleSheet.create({
   },
   retryText: {
     ...typography.button,
-    color: colors.textLight,
+    color: colors.textPrimary,
   },
 });

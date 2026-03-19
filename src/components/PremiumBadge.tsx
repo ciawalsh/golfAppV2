@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   label: {
-    ...typography.caption,
+    ...typography.caption1,
     color: colors.premiumGold,
     fontWeight: '700',
   },

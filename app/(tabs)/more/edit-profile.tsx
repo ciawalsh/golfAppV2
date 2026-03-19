@@ -165,7 +165,7 @@ export default function EditProfileScreen() {
                 <MaterialCommunityIcons
                   name="camera"
                   size={16}
-                  color={colors.textLight}
+                  color={colors.textPrimary}
                 />
               </View>
             </View>
@@ -180,7 +180,7 @@ export default function EditProfileScreen() {
               value={displayName}
               onChangeText={setDisplayName}
               placeholder="Enter your name"
-              placeholderTextColor={colors.textMuted}
+              placeholderTextColor={colors.textSecondary}
               autoCapitalize="words"
               autoCorrect={false}
               maxLength={50}
@@ -197,7 +197,7 @@ export default function EditProfileScreen() {
               value={handicapText}
               onChangeText={handleHandicapChange}
               placeholder="e.g. 18.5"
-              placeholderTextColor={colors.textMuted}
+              placeholderTextColor={colors.textSecondary}
               keyboardType="decimal-pad"
               maxLength={4}
             />
@@ -213,7 +213,7 @@ export default function EditProfileScreen() {
               value={homeCourse}
               onChangeText={setHomeCourse}
               placeholder="e.g. Royal Birkdale"
-              placeholderTextColor={colors.textMuted}
+              placeholderTextColor={colors.textSecondary}
               autoCapitalize="words"
               maxLength={100}
             />
@@ -240,18 +240,18 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
+    borderBottomColor: colors.separatorLight,
   },
   headerTitle: {
-    ...typography.h3,
+    ...typography.title3,
     color: colors.textPrimary,
   },
   saveText: {
     ...typography.button,
-    color: colors.secondary,
+    color: colors.accent,
   },
   saveTextDisabled: {
-    color: colors.textMuted,
+    color: colors.textSecondary,
   },
   scrollContent: {
     paddingTop: spacing.xxl,
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.backgroundElevated,
     width: 28,
     height: 28,
     borderRadius: 14,
@@ -285,15 +285,15 @@ const styles = StyleSheet.create({
     borderColor: colors.surface,
   },
   changePhotoText: {
-    ...typography.bodySmall,
-    color: colors.secondary,
+    ...typography.callout,
+    color: colors.accent,
     marginTop: spacing.sm,
   },
   formGroup: {
     marginBottom: spacing.xl,
   },
   fieldLabel: {
-    ...typography.caption,
+    ...typography.caption1,
     color: colors.textSecondary,
     textTransform: 'uppercase',
     marginBottom: spacing.sm,
@@ -306,13 +306,13 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     color: colors.textPrimary,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.separator,
   },
   inputError: {
     borderColor: colors.error,
   },
   errorText: {
-    ...typography.caption,
+    ...typography.caption1,
     color: colors.error,
     marginTop: spacing.xs,
   },

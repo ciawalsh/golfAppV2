@@ -23,7 +23,7 @@ const TEE_COLORS: Record<string, string> = {
 };
 
 function getTeeHex(teeColor: string): string {
-  return TEE_COLORS[teeColor.toLowerCase()] ?? colors.grey400;
+  return TEE_COLORS[teeColor.toLowerCase()] ?? colors.textSecondary;
 }
 
 export function TeeCard({ tee, selected, onPress }: TeeCardProps) {
@@ -64,7 +64,7 @@ export function TeeCard({ tee, selected, onPress }: TeeCardProps) {
         <MaterialCommunityIcons
           name="check-circle"
           size={24}
-          color={colors.secondary}
+          color={colors.accent}
         />
       ) : null}
     </Pressable>
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   },
   selected: {
     borderWidth: 2,
-    borderColor: colors.secondary,
+    borderColor: colors.accent,
   },
   teeCircle: {
     width: 28,
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   },
   teeCircleBorder: {
     borderWidth: 1,
-    borderColor: colors.grey300,
+    borderColor: colors.textTertiary,
   },
   info: {
     flex: 1,
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   detail: {
-    ...typography.caption,
+    ...typography.caption1,
     color: colors.textSecondary,
     marginTop: 2,
   },
@@ -114,12 +114,12 @@ const styles = StyleSheet.create({
     minWidth: 44,
   },
   statLabel: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
     fontSize: 10,
   },
   statValue: {
-    ...typography.bodySmall,
+    ...typography.callout,
     color: colors.textPrimary,
     fontWeight: '600',
   },

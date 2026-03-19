@@ -3,6 +3,7 @@ export interface Coach {
   id: string;
   name: string;
   bio: string;
+  shortBio: string;
   profilePic: string;
   image: string;
   videoPitch?: string;

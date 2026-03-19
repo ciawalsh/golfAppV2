@@ -38,7 +38,20 @@ export default function ArticleDetailScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()} hitSlop={8}>
+            <MaterialCommunityIcons
+              name="arrow-left"
+              size={24}
+              color={colors.textPrimary}
+            />
+          </Pressable>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            Article
+          </Text>
+          <View style={styles.headerSpacer} />
+        </View>
         <LoadingIndicator />
       </SafeAreaView>
     );
@@ -46,7 +59,20 @@ export default function ArticleDetailScreen() {
 
   if (error) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()} hitSlop={8}>
+            <MaterialCommunityIcons
+              name="arrow-left"
+              size={24}
+              color={colors.textPrimary}
+            />
+          </Pressable>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            Article
+          </Text>
+          <View style={styles.headerSpacer} />
+        </View>
         <ErrorState message="Failed to load article" onRetry={refetch} />
       </SafeAreaView>
     );
@@ -54,7 +80,20 @@ export default function ArticleDetailScreen() {
 
   if (!article) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()} hitSlop={8}>
+            <MaterialCommunityIcons
+              name="arrow-left"
+              size={24}
+              color={colors.textPrimary}
+            />
+          </Pressable>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            Article
+          </Text>
+          <View style={styles.headerSpacer} />
+        </View>
         <EmptyState
           title="Article not found"
           icon="newspaper-variant-outline"
@@ -117,7 +156,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
   },
   headerTitle: {
-    ...typography.h3,
+    ...typography.title3,
     color: colors.textPrimary,
     flex: 1,
     textAlign: 'center',
@@ -136,12 +175,12 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   title: {
-    ...typography.h2,
+    ...typography.title2,
     color: colors.textPrimary,
   },
   date: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
     marginTop: spacing.sm,
   },
   body: {

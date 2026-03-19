@@ -2,10 +2,12 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FallbackImage } from '@/components/FallbackImage';
+import { GradientOverlay } from '@/components/GradientOverlay';
 import { PremiumBadge } from '@/components/PremiumBadge';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { spacing, SCREEN_WIDTH, borderRadius } from '@/constants/spacing';
+import { toTitleCase } from '@/lib/toTitleCase';
 import { Video } from '@/types';
 
 interface VideoCardProps {
@@ -14,7 +16,7 @@ interface VideoCardProps {
   locked?: boolean;
 }
 
-const CARD_WIDTH = SCREEN_WIDTH * 0.42;
+const CARD_WIDTH = (SCREEN_WIDTH - spacing.lg * 2 - spacing.md) / 2;
 
 export const VideoCard = React.memo(function VideoCard({
   video,
@@ -23,35 +25,36 @@ export const VideoCard = React.memo(function VideoCard({
 }: VideoCardProps) {
   return (
     <Pressable style={styles.card} onPress={onPress}>
-      <View style={styles.thumbnail}>
-        <FallbackImage
-          uri={video.thumbnailUrl}
-          style={styles.image}
-          resizeMode="cover"
-          fallbackIcon="play-circle"
-        />
-        {locked ? (
-          <View style={styles.lockOverlay}>
-            <PremiumBadge size="large" />
-          </View>
-        ) : (
-          <View style={styles.playOverlay}>
-            <MaterialCommunityIcons
-              name="play-circle"
-              size={32}
-              color={colors.textLight}
-            />
-          </View>
-        )}
-        {video.duration ? (
-          <View style={styles.durationBadge}>
-            <Text style={styles.durationText}>{video.duration}</Text>
-          </View>
-        ) : null}
+      <FallbackImage
+        uri={video.thumbnailUrl}
+        style={styles.image}
+        resizeMode="cover"
+        fallbackIcon="play-circle"
+      />
+      <GradientOverlay height="60%" />
+      {locked ? (
+        <View style={styles.lockOverlay}>
+          <PremiumBadge size="large" />
+        </View>
+      ) : (
+        <View style={styles.playIcon}>
+          <MaterialCommunityIcons
+            name="play-circle"
+            size={24}
+            color={colors.textPrimary}
+          />
+        </View>
+      )}
+      {video.duration ? (
+        <View style={styles.durationBadge}>
+          <Text style={styles.durationText}>{video.duration}</Text>
+        </View>
+      ) : null}
+      <View style={styles.info}>
+        <Text style={styles.title} numberOfLines={2}>
+          {toTitleCase(video.title)}
+        </Text>
       </View>
-      <Text style={styles.title} numberOfLines={2}>
-        {video.title}
-      </Text>
     </Pressable>
   );
 });
@@ -59,25 +62,21 @@ export const VideoCard = React.memo(function VideoCard({
 const styles = StyleSheet.create({
   card: {
     width: CARD_WIDTH,
-    marginRight: spacing.md,
-  },
-  thumbnail: {
-    width: '100%',
     aspectRatio: 16 / 9,
     borderRadius: borderRadius.sm,
     overflow: 'hidden',
-    backgroundColor: colors.grey200,
-    marginBottom: spacing.xs,
+    backgroundColor: colors.backgroundSecondary,
   },
   image: {
+    ...StyleSheet.absoluteFillObject,
     width: '100%',
     height: '100%',
   },
-  playOverlay: {
+  playIcon: {
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.videoPlayOverlay,
+    opacity: 0.8,
   },
   lockOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -87,20 +86,27 @@ const styles = StyleSheet.create({
   },
   durationBadge: {
     position: 'absolute',
-    bottom: 4,
-    right: 4,
+    top: spacing.xs,
+    right: spacing.xs,
     backgroundColor: colors.durationBadgeBg,
-    borderRadius: 4,
+    borderRadius: borderRadius.xs,
     paddingHorizontal: 4,
     paddingVertical: 2,
   },
   durationText: {
-    ...typography.caption,
-    color: colors.textLight,
-    fontSize: 10,
+    ...typography.caption2,
+    color: colors.textPrimary,
+  },
+  info: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: spacing.sm,
   },
   title: {
-    ...typography.bodySmall,
+    ...typography.caption1,
     color: colors.textPrimary,
+    fontWeight: '600',
   },
 });

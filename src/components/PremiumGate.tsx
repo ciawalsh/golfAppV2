@@ -51,12 +51,12 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   title: {
-    ...typography.h3,
-    color: colors.textLight,
+    ...typography.title3,
+    color: colors.textPrimary,
   },
   subtitle: {
-    ...typography.bodySmall,
-    color: colors.grey300,
+    ...typography.callout,
+    color: colors.textTertiary,
     textAlign: 'center',
   },
   button: {
@@ -68,6 +68,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     ...typography.button,
-    color: colors.primary,
+    color: colors.textPrimary,
   },
 });

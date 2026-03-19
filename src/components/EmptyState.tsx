@@ -17,7 +17,11 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <View style={styles.container}>
-      <MaterialCommunityIcons name={icon} size={48} color={colors.grey400} />
+      <MaterialCommunityIcons
+        name={icon}
+        size={48}
+        color={colors.textSecondary}
+      />
       <Text style={styles.title}>{title}</Text>
       {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
     </View>
@@ -39,8 +43,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   subtitle: {
-    ...typography.bodySmall,
-    color: colors.textMuted,
+    ...typography.callout,
+    color: colors.textSecondary,
     textAlign: 'center',
   },
 });

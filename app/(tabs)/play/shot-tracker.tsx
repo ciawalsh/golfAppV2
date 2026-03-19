@@ -278,7 +278,7 @@ export default function ShotTrackerScreen() {
           <MaterialCommunityIcons
             name="golf"
             size={48}
-            color={colors.grey400}
+            color={colors.textSecondary}
           />
           <Text style={styles.noRoundTitle}>No Active Round</Text>
           <Text style={styles.noRoundSubtitle}>
@@ -337,7 +337,7 @@ export default function ShotTrackerScreen() {
             <MaterialCommunityIcons
               name="map-marker-off"
               size={48}
-              color={colors.grey400}
+              color={colors.textSecondary}
             />
             <Text style={styles.noRoundTitle}>Location Unavailable</Text>
             <Text style={styles.noRoundSubtitle}>
@@ -384,7 +384,7 @@ export default function ShotTrackerScreen() {
                   <MaterialCommunityIcons
                     name="plus-circle"
                     size={28}
-                    color={colors.secondary}
+                    color={colors.accent}
                   />
                 </View>
               </Marker>
@@ -394,7 +394,7 @@ export default function ShotTrackerScreen() {
             {polylineCoords.length >= 2 ? (
               <Polyline
                 coordinates={polylineCoords}
-                strokeColor={colors.secondary}
+                strokeColor={colors.accent}
                 strokeWidth={2}
                 lineDashPattern={[8, 4]}
               />
@@ -430,7 +430,7 @@ export default function ShotTrackerScreen() {
             <MaterialCommunityIcons
               name="check"
               size={20}
-              color={colors.textLight}
+              color={colors.textPrimary}
             />
             <Text style={styles.confirmButtonText}>Add Shot</Text>
           </Pressable>
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   headerTitle: {
-    ...typography.h3,
+    ...typography.title3,
     color: colors.textPrimary,
     flex: 1,
     textAlign: 'center',
@@ -479,20 +479,20 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.grey100,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
   holeChipActive: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.accent,
   },
   holeChipText: {
-    ...typography.caption,
+    ...typography.caption1,
     color: colors.textSecondary,
     fontWeight: '600',
   },
   holeChipTextActive: {
-    color: colors.textLight,
+    color: colors.textPrimary,
     fontWeight: '700',
   },
   mapContainer: {
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     padding: spacing.xxl,
   },
   loadingText: {
-    ...typography.bodySmall,
+    ...typography.callout,
     color: colors.textSecondary,
   },
   noRoundTitle: {
@@ -518,8 +518,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   noRoundSubtitle: {
-    ...typography.bodySmall,
-    color: colors.textMuted,
+    ...typography.callout,
+    color: colors.textSecondary,
     textAlign: 'center',
   },
   markerContainer: {
@@ -529,22 +529,22 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: colors.textLight,
+    borderColor: colors.textPrimary,
   },
   markerText: {
     fontSize: 12,
     fontWeight: '700',
-    color: colors.textLight,
+    color: colors.textPrimary,
   },
   distanceLabel: {
-    ...typography.caption,
+    ...typography.caption1,
     fontSize: 10,
     fontWeight: '700',
-    color: colors.textLight,
+    color: colors.textPrimary,
     backgroundColor: 'rgba(0,0,0,0.65)',
     paddingHorizontal: 4,
     paddingVertical: 1,
@@ -559,7 +559,7 @@ const styles = StyleSheet.create({
   clubPicker: {
     maxHeight: 44,
     borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
+    borderTopColor: colors.separatorLight,
     backgroundColor: colors.surface,
   },
   clubPickerContent: {
@@ -572,18 +572,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.round,
-    backgroundColor: colors.grey100,
+    backgroundColor: colors.surface,
   },
   clubChipActive: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.accent,
   },
   clubChipText: {
-    ...typography.caption,
+    ...typography.caption1,
     color: colors.textSecondary,
     fontWeight: '600',
   },
   clubChipTextActive: {
-    color: colors.textLight,
+    color: colors.textPrimary,
     fontWeight: '700',
   },
   confirmBar: {
@@ -594,7 +594,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
+    borderTopColor: colors.separatorLight,
     gap: spacing.md,
   },
   cancelButton: {
@@ -602,33 +602,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   cancelButtonText: {
-    ...typography.bodySmall,
+    ...typography.callout,
     color: colors.textSecondary,
   },
   confirmInfo: {
     alignItems: 'center',
   },
   confirmClub: {
-    ...typography.bodySmall,
+    ...typography.callout,
     color: colors.textPrimary,
     fontWeight: '600',
   },
   confirmHole: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
   },
   confirmButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.accent,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     borderRadius: borderRadius.sm,
     gap: spacing.xs,
   },
   confirmButtonText: {
-    ...typography.bodySmall,
-    color: colors.textLight,
+    ...typography.callout,
+    color: colors.textPrimary,
     fontWeight: '700',
   },
   infoBar: {
@@ -636,11 +636,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
+    borderTopColor: colors.separatorLight,
     alignItems: 'center',
   },
   infoText: {
-    ...typography.bodySmall,
+    ...typography.callout,
     color: colors.textSecondary,
   },
 });

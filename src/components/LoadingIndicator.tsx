@@ -33,7 +33,7 @@ export function LoadingSpinner({ size = 24 }: { size?: number }) {
   return (
     <ActivityIndicator
       size={size > 30 ? 'large' : 'small'}
-      color={colors.secondary}
+      color={colors.accent}
     />
   );
 }

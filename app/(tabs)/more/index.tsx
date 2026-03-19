@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: spacing.lg,
-    paddingBottom: spacing.xxxl,
+    paddingBottom: 100,
   },
   profileCard: {
     backgroundColor: colors.surface,
@@ -238,12 +238,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   displayName: {
-    ...typography.h2,
+    ...typography.title2,
     color: colors.textPrimary,
   },
   email: {
-    ...typography.bodySmall,
-    color: colors.textMuted,
+    ...typography.callout,
+    color: colors.textSecondary,
     marginTop: spacing.xs,
   },
   badgeRow: {
@@ -253,18 +253,18 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   handicapBadge: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.accent,
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
     borderRadius: borderRadius.xs,
   },
   handicapText: {
-    ...typography.caption,
-    color: colors.textLight,
+    ...typography.caption1,
+    color: colors.textPrimary,
     fontWeight: '600',
   },
   homeCourse: {
-    ...typography.caption,
+    ...typography.caption1,
     color: colors.textSecondary,
     flex: 1,
   },
@@ -273,12 +273,12 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.sm,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.separator,
     alignItems: 'center',
   },
   editButtonText: {
     ...typography.button,
-    color: colors.primary,
+    color: colors.textPrimary,
   },
   statsRow: {
     flexDirection: 'row',
@@ -293,16 +293,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statValue: {
-    ...typography.h3,
+    ...typography.title3,
     color: colors.textPrimary,
   },
   statLabel: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
     marginTop: spacing.xs,
   },
   statDivider: {
     width: 1,
-    backgroundColor: colors.borderLight,
+    backgroundColor: colors.separatorLight,
   },
 });

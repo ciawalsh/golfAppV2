@@ -93,7 +93,7 @@ export default function LoginScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Display Name"
-                placeholderTextColor={colors.textMuted}
+                placeholderTextColor={colors.textSecondary}
                 value={displayName}
                 onChangeText={setDisplayName}
                 autoCapitalize="words"
@@ -104,7 +104,7 @@ export default function LoginScreen() {
             <TextInput
               style={styles.input}
               placeholder="Email"
-              placeholderTextColor={colors.textMuted}
+              placeholderTextColor={colors.textSecondary}
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -115,7 +115,7 @@ export default function LoginScreen() {
             <TextInput
               style={styles.input}
               placeholder="Password"
-              placeholderTextColor={colors.textMuted}
+              placeholderTextColor={colors.textSecondary}
               value={password}
               onChangeText={setPassword}
               secureTextEntry
@@ -130,7 +130,7 @@ export default function LoginScreen() {
               disabled={isLoading}
             >
               {isLoading ? (
-                <ActivityIndicator color={colors.textLight} />
+                <ActivityIndicator color={colors.textPrimary} />
               ) : (
                 <Text style={styles.primaryButtonText}>
                   {isSignUp ? 'Create Account' : 'Sign In'}
@@ -177,7 +177,7 @@ export default function LoginScreen() {
                 <MaterialCommunityIcons
                   name="apple"
                   size={20}
-                  color={colors.textLight}
+                  color={colors.textOnLight}
                 />
                 <Text style={[styles.socialButtonText, styles.appleButtonText]}>
                   Continue with Apple
@@ -219,19 +219,19 @@ const styles = StyleSheet.create({
     ...typography.body,
     backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.separator,
     borderRadius: 12,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     color: colors.textPrimary,
   },
   errorText: {
-    ...typography.bodySmall,
+    ...typography.callout,
     color: colors.error,
     textAlign: 'center',
   },
   primaryButton: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.accent,
     borderRadius: 12,
     paddingVertical: spacing.lg,
     alignItems: 'center',
@@ -242,14 +242,14 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     ...typography.button,
-    color: colors.textLight,
+    color: colors.textPrimary,
   },
   toggleButton: {
     alignItems: 'center',
     paddingVertical: spacing.sm,
   },
   toggleText: {
-    ...typography.bodySmall,
+    ...typography.callout,
     color: colors.textSecondary,
   },
   divider: {
@@ -260,11 +260,11 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: colors.border,
+    backgroundColor: colors.separator,
   },
   dividerText: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
     marginHorizontal: spacing.lg,
   },
   socialButton: {
@@ -278,16 +278,16 @@ const styles = StyleSheet.create({
   googleButton: {
     backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.separator,
   },
   appleButton: {
-    backgroundColor: colors.appleButton,
+    backgroundColor: colors.textPrimary,
   },
   socialButtonText: {
     ...typography.button,
     color: colors.textPrimary,
   },
   appleButtonText: {
-    color: colors.textLight,
+    color: colors.textOnLight,
   },
 });

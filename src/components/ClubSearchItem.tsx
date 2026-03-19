@@ -27,11 +27,7 @@ export function ClubSearchItem({
   return (
     <Pressable style={styles.container} onPress={onPress}>
       <View style={styles.icon}>
-        <MaterialCommunityIcons
-          name="golf"
-          size={24}
-          color={colors.secondary}
-        />
+        <MaterialCommunityIcons name="golf" size={24} color={colors.accent} />
       </View>
       <View style={styles.info}>
         <Text style={styles.name} numberOfLines={1}>
@@ -51,7 +47,7 @@ export function ClubSearchItem({
       <MaterialCommunityIcons
         name="chevron-right"
         size={20}
-        color={colors.grey400}
+        color={colors.textSecondary}
       />
     </Pressable>
   );
@@ -70,7 +66,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: borderRadius.md,
-    backgroundColor: colors.grey100,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -83,12 +79,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   location: {
-    ...typography.caption,
+    ...typography.caption1,
     color: colors.textSecondary,
     marginTop: 2,
   },
   distance: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
   },
 });

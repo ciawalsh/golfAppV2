@@ -27,15 +27,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.md,
   },
   title: {
-    ...typography.h3,
+    ...typography.title3,
     color: colors.textPrimary,
   },
   seeAll: {
-    ...typography.bodySmall,
-    color: colors.secondary,
+    ...typography.callout,
+    color: colors.accent,
     fontWeight: '600',
   },
 });

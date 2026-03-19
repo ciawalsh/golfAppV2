@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
   },
   headerBar: {
     height: HEADER_HEIGHT,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.backgroundElevated,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: PAGE_PADDING,
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
   },
   brandText: {
     marginLeft: 8,
-    color: colors.textLight,
+    color: colors.textPrimary,
     fontSize: 12,
     lineHeight: 14,
     fontWeight: '600',
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   metaText: {
-    color: colors.textMuted,
+    color: colors.textSecondary,
     fontSize: 14,
     lineHeight: 18,
     marginTop: 4,
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   statsText: {
-    color: colors.textMuted,
+    color: colors.textSecondary,
     fontSize: 12,
     lineHeight: 16,
     marginTop: 8,
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
   },
   scorecardBlock: {
     flex: 1,
-    backgroundColor: colors.grey100,
+    backgroundColor: colors.surface,
     paddingHorizontal: PAGE_PADDING,
     paddingTop: 16,
     paddingBottom: 14,
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   labelText: {
-    color: colors.textMuted,
+    color: colors.textSecondary,
     fontSize: 12,
     lineHeight: 14,
     fontWeight: '600',
@@ -499,10 +499,10 @@ const styles = StyleSheet.create({
     color: colors.scoreDouble,
   },
   scoreTextLight: {
-    color: colors.textLight,
+    color: colors.textPrimary,
   },
   scoreTextMuted: {
-    color: colors.textMuted,
+    color: colors.textSecondary,
   },
   totalCell: {
     width: TOTAL_CELL_WIDTH,
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   footerText: {
-    color: colors.textMuted,
+    color: colors.textSecondary,
     fontSize: 11,
     lineHeight: 13,
     fontWeight: '400',

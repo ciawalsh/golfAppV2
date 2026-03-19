@@ -10,6 +10,7 @@ import { VideoCard } from '@/components/VideoCard';
 import { SkeletonLoader } from '@/components/SkeletonLoader';
 import { ErrorState } from '@/components/ErrorState';
 import { EmptyState } from '@/components/EmptyState';
+import { toTitleCase } from '@/lib/toTitleCase';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { spacing, SCREEN_WIDTH, borderRadius } from '@/constants/spacing';
@@ -112,6 +113,7 @@ export default function DormyScreen() {
       </View>
 
       <FlatList
+        style={{ flexGrow: 0 }}
         data={allGenres}
         keyExtractor={(item) => item.type}
         horizontal
@@ -131,7 +133,7 @@ export default function DormyScreen() {
                 selectedGenre === item.type && styles.pillTextActive,
               ]}
             >
-              {item.title}
+              {toTitleCase(item.title)}
             </Text>
           </Pressable>
         )}
@@ -170,7 +172,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
   },
   headerTitle: {
-    ...typography.h3,
+    ...typography.title3,
     color: colors.textPrimary,
     flex: 1,
     textAlign: 'center',
@@ -184,25 +186,26 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   pill: {
+    height: 36,
+    borderRadius: 18,
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: borderRadius.round,
-    backgroundColor: colors.grey100,
-    marginRight: spacing.sm,
+    justifyContent: 'center',
+    backgroundColor: colors.backgroundElevated,
   },
   pillActive: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.backgroundSecondary,
   },
   pillText: {
-    ...typography.bodySmall,
-    color: colors.textSecondary,
+    ...typography.callout,
+    color: colors.textTertiary,
     fontWeight: '600',
   },
   pillTextActive: {
-    color: colors.textLight,
+    color: colors.textPrimary,
   },
   grid: {
     paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
     paddingBottom: spacing.xxl,
   },
   row: {

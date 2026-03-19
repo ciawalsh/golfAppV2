@@ -105,7 +105,7 @@ export default function PlayScreen() {
               <MaterialCommunityIcons
                 name="golf-tee"
                 size={24}
-                color={colors.secondary}
+                color={colors.accent}
               />
               <View style={styles.resumeInfo}>
                 <Text style={styles.resumeLabel}>Round in Progress</Text>
@@ -121,7 +121,7 @@ export default function PlayScreen() {
             <MaterialCommunityIcons
               name="chevron-right"
               size={24}
-              color={colors.secondary}
+              color={colors.accent}
             />
           </Pressable>
         ) : (
@@ -132,7 +132,7 @@ export default function PlayScreen() {
             <MaterialCommunityIcons
               name="plus-circle"
               size={24}
-              color={colors.textLight}
+              color={colors.textPrimary}
             />
             <Text style={styles.startButtonText}>Start New Round</Text>
           </Pressable>
@@ -198,10 +198,10 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxxl,
+    paddingBottom: 100,
   },
   title: {
-    ...typography.h1,
+    ...typography.title1,
     color: colors.textPrimary,
     marginTop: spacing.lg,
     marginBottom: spacing.xl,
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     borderRadius: borderRadius.md,
     borderLeftWidth: 4,
-    borderLeftColor: colors.secondary,
+    borderLeftColor: colors.accent,
     marginBottom: spacing.xl,
   },
   resumeLeft: {
@@ -227,8 +227,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   resumeLabel: {
-    ...typography.caption,
-    color: colors.secondary,
+    ...typography.caption1,
+    color: colors.accent,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   resumeMeta: {
-    ...typography.caption,
+    ...typography.caption1,
     color: colors.textSecondary,
     marginTop: 2,
   },
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.accent,
     paddingVertical: spacing.lg,
     borderRadius: borderRadius.md,
     gap: spacing.sm,
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   },
   startButtonText: {
     ...typography.button,
-    color: colors.textLight,
+    color: colors.textPrimary,
     fontWeight: '700',
   },
   statsRow: {
@@ -272,20 +272,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statValue: {
-    ...typography.h2,
+    ...typography.title2,
     color: colors.textPrimary,
     fontWeight: '700',
   },
   statLabel: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
     marginTop: spacing.xs,
   },
   recentSection: {
     gap: spacing.md,
   },
   sectionTitle: {
-    ...typography.h3,
+    ...typography.title3,
     color: colors.textPrimary,
   },
   roundsList: {

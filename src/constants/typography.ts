@@ -1,69 +1,70 @@
-import { Platform, TextStyle } from 'react-native';
-
-export const fontFamilies = {
-  heading: Platform.select({
-    ios: 'Futura-Bold',
-    android: 'NunitoSans-Bold',
-    default: 'NunitoSans-Bold',
-  }),
-  bodyLight: 'NunitoSans-Light',
-  bodyRegular: 'NunitoSans-Regular',
-  bodySemiBold: 'NunitoSans-SemiBold',
-  bodyBold: 'NunitoSans-Bold',
-  bodyExtraBold: 'NunitoSans-ExtraBold',
-} as const;
+import { TextStyle } from 'react-native';
 
 export const typography = {
-  h1: {
-    fontFamily: fontFamilies.heading,
+  display: {
+    fontSize: 34,
+    lineHeight: 41,
+    fontWeight: '700',
+  } as TextStyle,
+
+  title1: {
     fontSize: 28,
     lineHeight: 34,
     fontWeight: '700',
   } as TextStyle,
 
-  h2: {
-    fontFamily: fontFamilies.heading,
+  title2: {
     fontSize: 22,
     lineHeight: 28,
-    fontWeight: '700',
+    fontWeight: '600',
   } as TextStyle,
 
-  h3: {
-    fontFamily: fontFamilies.heading,
+  title3: {
     fontSize: 18,
     lineHeight: 24,
-    fontWeight: '700',
+    fontWeight: '600',
+  } as TextStyle,
+
+  headline: {
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: '600',
   } as TextStyle,
 
   body: {
-    fontFamily: fontFamilies.bodyRegular,
     fontSize: 16,
-    lineHeight: 24,
+    lineHeight: 22,
+    fontWeight: '400',
   } as TextStyle,
 
-  bodySmall: {
-    fontFamily: fontFamilies.bodyRegular,
+  callout: {
     fontSize: 14,
     lineHeight: 20,
+    fontWeight: '400',
   } as TextStyle,
 
-  caption: {
-    fontFamily: fontFamilies.bodyRegular,
+  caption1: {
     fontSize: 12,
     lineHeight: 16,
+    fontWeight: '400',
   } as TextStyle,
 
+  caption2: {
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: '400',
+  } as TextStyle,
+
+  // Keep a button style for consistency
   button: {
-    fontFamily: fontFamilies.bodySemiBold,
     fontSize: 16,
-    lineHeight: 20,
+    lineHeight: 22,
     fontWeight: '600',
   } as TextStyle,
 
   tabLabel: {
-    fontFamily: fontFamilies.bodySemiBold,
     fontSize: 10,
     lineHeight: 14,
-    fontWeight: '600',
+    fontWeight: '500',
   } as TextStyle,
 } as const;

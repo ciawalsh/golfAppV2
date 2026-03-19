@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { FallbackImage } from '@/components/FallbackImage';
+import { GradientOverlay } from '@/components/GradientOverlay';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { spacing, SCREEN_WIDTH, borderRadius } from '@/constants/spacing';
@@ -28,7 +29,7 @@ export const CoachCard = React.memo(function CoachCard({
         resizeMode="cover"
         fallbackIcon="account"
       />
-      <View style={styles.gradient} />
+      <GradientOverlay height="50%" />
       <View style={styles.info}>
         <Text style={styles.name} numberOfLines={1}>
           {coach.name}
@@ -50,18 +51,11 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     overflow: 'hidden',
     marginRight: spacing.md,
-    backgroundColor: colors.grey200,
+    backgroundColor: colors.backgroundSecondary,
   },
   image: {
     width: '100%',
     height: '100%',
-  },
-  gradient: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'transparent',
-    // Simulated gradient via bottom overlay
-    borderBottomLeftRadius: borderRadius.md,
-    borderBottomRightRadius: borderRadius.md,
   },
   info: {
     position: 'absolute',
@@ -69,15 +63,14 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: spacing.md,
-    backgroundColor: colors.premiumOverlay,
   },
   name: {
-    ...typography.h3,
-    color: colors.textLight,
+    ...typography.title3,
+    color: colors.textPrimary,
   },
   credential: {
-    ...typography.caption,
-    color: colors.grey300,
+    ...typography.caption1,
+    color: colors.textSecondary,
     marginTop: 2,
   },
 });

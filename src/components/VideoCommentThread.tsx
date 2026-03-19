@@ -1,5 +1,12 @@
 import { useMemo } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { ErrorState } from '@/components/ErrorState';
 import { CommentInput } from '@/components/CommentInput';
 import { CommentItem } from '@/components/CommentItem';
@@ -44,7 +51,11 @@ export function VideoCommentThread({ videoId }: VideoCommentThreadProps) {
 
   if (isLoading) {
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={0}
+      >
         <View style={styles.header}>
           <Text style={styles.title}>Discussion</Text>
           <Text style={styles.count}>0</Text>
@@ -52,13 +63,17 @@ export function VideoCommentThread({ videoId }: VideoCommentThreadProps) {
         <View style={styles.centered}>
           <LoadingSpinner size={32} />
         </View>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={0}
+      >
         <View style={styles.header}>
           <Text style={styles.title}>Discussion</Text>
         </View>
@@ -68,12 +83,16 @@ export function VideoCommentThread({ videoId }: VideoCommentThreadProps) {
             void refetch();
           }}
         />
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={0}
+    >
       <View style={styles.header}>
         <Text style={styles.title}>Discussion</Text>
         <Text style={styles.count}>{comments.length}</Text>
@@ -125,7 +144,7 @@ export function VideoCommentThread({ videoId }: VideoCommentThreadProps) {
         onSend={handleSendComment}
         isPending={createComment.isPending}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -137,7 +156,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     backgroundColor: colors.surface,
-    borderBottomColor: colors.borderLight,
+    borderBottomColor: colors.separatorLight,
     borderBottomWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -145,11 +164,11 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
   },
   title: {
-    ...typography.h3,
+    ...typography.title3,
     color: colors.textPrimary,
   },
   count: {
-    ...typography.bodySmall,
+    ...typography.callout,
     color: colors.textSecondary,
     fontWeight: '600',
   },
@@ -178,7 +197,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   separator: {
-    backgroundColor: colors.borderLight,
+    backgroundColor: colors.separatorLight,
     height: 1,
     marginLeft: spacing.lg + 32 + spacing.sm,
   },

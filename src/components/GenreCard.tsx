@@ -1,7 +1,9 @@
 import React from 'react';
 import { Text, Pressable, StyleSheet, View } from 'react-native';
 import { FallbackImage } from '@/components/FallbackImage';
+import { GradientOverlay } from '@/components/GradientOverlay';
 import { PremiumBadge } from '@/components/PremiumBadge';
+import { toTitleCase } from '@/lib/toTitleCase';
 import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { spacing, SCREEN_WIDTH, borderRadius } from '@/constants/spacing';
@@ -13,8 +15,7 @@ interface GenreCardProps {
   locked?: boolean;
 }
 
-const CARD_WIDTH = SCREEN_WIDTH * 0.4;
-const CARD_HEIGHT = CARD_WIDTH * 0.75;
+const CARD_SIZE = SCREEN_WIDTH * 0.35;
 
 export const GenreCard = React.memo(function GenreCard({
   genre,
@@ -29,9 +30,17 @@ export const GenreCard = React.memo(function GenreCard({
         resizeMode="cover"
         fallbackIcon="play-circle-outline"
       />
-      <View style={styles.overlay} />
+      <GradientOverlay
+        height="40%"
+        colors={[
+          'transparent',
+          'rgba(0,0,0,0.3)',
+          'rgba(0,0,0,0.7)',
+          'rgba(0,0,0,0.9)',
+        ]}
+      />
       <Text style={styles.title} numberOfLines={2}>
-        {genre.title}
+        {toTitleCase(genre.title)}
       </Text>
       {locked && (
         <View style={styles.badge}>
@@ -44,12 +53,12 @@ export const GenreCard = React.memo(function GenreCard({
 
 const styles = StyleSheet.create({
   card: {
-    width: CARD_WIDTH,
-    height: CARD_HEIGHT,
+    width: CARD_SIZE,
+    height: CARD_SIZE,
     borderRadius: borderRadius.md,
     overflow: 'hidden',
     marginRight: spacing.md,
-    backgroundColor: colors.grey200,
+    backgroundColor: colors.backgroundSecondary,
     justifyContent: 'flex-end',
   },
   image: {
@@ -57,15 +66,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.overlayLight,
-  },
   title: {
-    ...typography.button,
-    color: colors.textLight,
-    padding: spacing.sm,
-    textTransform: 'uppercase',
+    ...typography.headline,
+    color: colors.textPrimary,
+    padding: spacing.md,
   },
   badge: {
     position: 'absolute',

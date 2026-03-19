@@ -35,7 +35,7 @@ export function SwipeableRoundCard({
           <MaterialCommunityIcons
             name="trash-can-outline"
             size={20}
-            color={colors.textLight}
+            color={colors.textPrimary}
           />
           <Text style={styles.deleteText}>
             {isDeleting ? 'Deleting' : 'Delete'}
@@ -71,8 +71,8 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   deleteText: {
-    ...typography.caption,
-    color: colors.textLight,
+    ...typography.caption1,
+    color: colors.textPrimary,
     fontWeight: '700',
   },
 });

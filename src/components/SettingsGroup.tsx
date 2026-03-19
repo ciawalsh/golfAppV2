@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   title: {
-    ...typography.caption,
-    color: colors.textMuted,
+    ...typography.caption1,
+    color: colors.textSecondary,
     textTransform: 'uppercase',
     marginBottom: spacing.xs,
     paddingHorizontal: spacing.lg,
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: colors.borderLight,
+    backgroundColor: colors.separatorLight,
     marginLeft: spacing.lg + 22 + spacing.md, // icon width + gap
   },
 });

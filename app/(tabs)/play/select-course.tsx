@@ -183,12 +183,12 @@ export default function SelectCourseScreen() {
         <MaterialCommunityIcons
           name="magnify"
           size={20}
-          color={colors.textMuted}
+          color={colors.textSecondary}
         />
         <TextInput
           style={styles.searchInput}
           placeholder="Search clubs by name or location..."
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={colors.textSecondary}
           value={query}
           onChangeText={handleQueryChange}
           autoCorrect={false}
@@ -205,7 +205,7 @@ export default function SelectCourseScreen() {
             <MaterialCommunityIcons
               name="close-circle"
               size={18}
-              color={colors.textMuted}
+              color={colors.textSecondary}
             />
           </Pressable>
         ) : null}
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   headerTitle: {
-    ...typography.h3,
+    ...typography.title3,
     color: colors.textPrimary,
     flex: 1,
     textAlign: 'center',
@@ -298,12 +298,12 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   loadingText: {
-    ...typography.bodySmall,
+    ...typography.callout,
     color: colors.textSecondary,
   },
   separator: {
     height: 1,
-    backgroundColor: colors.borderLight,
+    backgroundColor: colors.separatorLight,
     marginLeft: spacing.lg,
   },
 });

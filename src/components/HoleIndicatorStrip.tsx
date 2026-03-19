@@ -67,17 +67,17 @@ const styles = StyleSheet.create({
   },
   currentDot: {
     borderWidth: 2,
-    borderColor: colors.primary,
+    borderColor: colors.backgroundElevated,
   },
   dotText: {
     fontSize: 11,
     fontWeight: '600',
-    color: colors.textMuted,
+    color: colors.textSecondary,
   },
   currentDotText: {
     fontWeight: '700',
   },
   scoredDotText: {
-    color: colors.textLight,
+    color: colors.textPrimary,
   },
 });
